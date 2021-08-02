@@ -822,7 +822,7 @@
 			buildConfigurationList = 6FDAA03521CE69D000FA6925 /* Build configuration list for PBXLegacyTarget "WireGuardGoBridgemacOS" */;
 			buildPhases = (
 			);
-			buildToolPath = /usr/bin/make;
+			buildToolPath = "$(PROJECT_DIR)/Sources/WireGuardKitGo/build.sh";
 			buildWorkingDirectory = "$(PROJECT_DIR)/Sources/WireGuardKitGo";
 			dependencies = (
 			);
@@ -836,7 +836,7 @@
 			buildConfigurationList = 6FDEF7E021846BC700D8FBF6 /* Build configuration list for PBXLegacyTarget "WireGuardGoBridgeiOS" */;
 			buildPhases = (
 			);
-			buildToolPath = /usr/bin/make;
+			buildToolPath = "$(PROJECT_DIR)/Sources/WireGuardKitGo/build.sh";
 			buildWorkingDirectory = "$(PROJECT_DIR)/Sources/WireGuardKitGo";
 			dependencies = (
 			);
