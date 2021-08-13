@@ -303,6 +303,23 @@ public class WireGuardAdapter {
         }
     }
 
+    private class SetNetworkSettingsCompletion {
+        private var block: ((_ error: Error?, _ isCancelled: Bool) -> Void)?
+
+        init(_ aBlock: @escaping (Error?, Bool) -> Void) {
+            block = aBlock
+        }
+
+        func invoke(_ error: Error?) {
+            block?(error, false)
+            block = nil
+        }
+
+        deinit {
+            block?(nil, true)
+        }
+    }
+
     /// Set network tunnel configuration.
     /// This method ensures that the call to `setTunnelNetworkSettings` does not time out, as in
     /// certain scenarios the completion handler given to it may not be invoked by the system.
@@ -319,9 +336,18 @@ public class WireGuardAdapter {
         condition.lock()
         defer { condition.unlock() }
 
-        self.packetTunnelProvider?.setTunnelNetworkSettings(networkSettings) { error in
+        let completion = SetNetworkSettingsCompletion { error, isCancelled in
             systemError = error
+
+            if isCancelled {
+                self.logHandler(.error, "setTunnelNetworkSettings was cancelled.")
+            }
+
             condition.signal()
+        }
+
+        self.packetTunnelProvider?.setTunnelNetworkSettings(networkSettings) { error in
+            completion.invoke(error)
         }
 
         // Packet tunnel's `setTunnelNetworkSettings` times out in certain
