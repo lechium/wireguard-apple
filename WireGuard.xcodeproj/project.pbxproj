@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3253675426D1B28300C83CB3 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3253675326D1B28300C83CB3 /* Media.xcassets */; };
 		3285808126CDAEAD0046153B /* LocalizationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE1765921C90E87002690EA /* LocalizationHelper.swift */; };
 		3285808326CDAEAD0046153B /* InterfaceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585B10462577E293004F691E /* InterfaceConfiguration.swift */; };
 		3285808426CDAEAD0046153B /* ringlogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FF3526C21C23F960008484E /* ringlogger.c */; };
@@ -405,6 +406,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3253675326D1B28300C83CB3 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		328580D026CDAEAD0046153B /* WireGuardtvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireGuardtvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		328580D126CDAEAE0046153B /* WireGuardiOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WireGuardiOS copy-Info.plist"; path = "/Users/kevinbradley/Projects/wireguard-apple/WireGuardiOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		32A298F526D04146001FA9B9 /* UIView+FLEX_Layout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FLEX_Layout.m"; sourceTree = "<group>"; };
@@ -642,6 +644,7 @@
 		32A2994626D04612001FA9B9 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				3253675326D1B28300C83CB3 /* Media.xcassets */,
 				32A2994726D04612001FA9B9 /* LaunchScreen.storyboard */,
 			);
 			path = tvOS;
@@ -1313,6 +1316,7 @@
 				328580C726CDAEAD0046153B /* wireguard_doc_logo_44x58.png in Resources */,
 				328580C826CDAEAD0046153B /* Assets.xcassets in Resources */,
 				328580C926CDAEAD0046153B /* wireguard_doc_logo_64x64.png in Resources */,
+				3253675426D1B28300C83CB3 /* Media.xcassets in Resources */,
 				328580CA26CDAEAD0046153B /* wireguard_doc_logo_320x320.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2014,7 +2018,7 @@
 			buildSettings = {
 				APP_ID_IOS = "com.nito.wireguard-ios";
 				ARCHS = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Brand Assets";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
@@ -2044,7 +2048,7 @@
 			buildSettings = {
 				APP_ID_IOS = "com.nito.wireguard-ios";
 				ARCHS = arm64;
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Brand Assets";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
