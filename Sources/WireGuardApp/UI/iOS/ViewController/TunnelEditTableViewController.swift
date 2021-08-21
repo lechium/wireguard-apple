@@ -42,12 +42,18 @@ class TunnelEditTableViewController: UITableViewController {
         .allowedIPs, .excludePrivateIPs, .persistentKeepAlive,
         .deletePeer
     ]
-
+    #if os(iOS)
     let onDemandFields: [ActivateOnDemandViewModel.OnDemandField] = [
         .nonWiFiInterface,
         .wiFiInterface,
         .ssid
     ]
+    #else
+    let onDemandFields: [ActivateOnDemandViewModel.OnDemandField] = [
+        .wiFiInterface,
+        .ssid
+    ]
+    #endif
 
     let tunnelsManager: TunnelsManager
     let tunnel: TunnelContainer?
@@ -77,6 +83,21 @@ class TunnelEditTableViewController: UITableViewController {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if tableView.numberOfRows(inSection: 0) > 0 {
+            let ip = IndexPath(row: 0, section: 0)
+            let cell = tableView.cellForRow(at: ip)
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        #if os(tvOS)
+        clearWeirdBackgrounds()
+        #endif
     }
 
     override func viewDidLoad() {
@@ -162,11 +183,15 @@ extension TunnelEditTableViewController {
         case .addPeer:
             return 1
         case .onDemand:
+            #if os(tvOS)
+                return 2
+            #else
             if onDemandViewModel.isWiFiInterfaceEnabled {
                 return 3
             } else {
                 return 2
             }
+            #endif
         }
     }
 
@@ -205,6 +230,16 @@ extension TunnelEditTableViewController {
             return publicKeyCell(for: tableView, at: indexPath, with: field)
         default:
             return interfaceFieldKeyValueCell(for: tableView, at: indexPath, with: field)
+        }
+    }
+
+    @objc func genKeypair(_ indexPath: IndexPath) {
+        self.tunnelViewModel.interfaceData[.privateKey] = PrivateKey().base64Key
+        if let privateKeyRow = self.interfaceFieldsBySection[indexPath.section].firstIndex(of: .privateKey),
+           let publicKeyRow = self.interfaceFieldsBySection[indexPath.section].firstIndex(of: .publicKey) {
+            let privateKeyIndex = IndexPath(row: privateKeyRow, section: indexPath.section)
+            let publicKeyIndex = IndexPath(row: publicKeyRow, section: indexPath.section)
+            self.tableView.reloadRows(at: [privateKeyIndex, publicKeyIndex], with: .fade)
         }
     }
 
@@ -425,13 +460,18 @@ extension TunnelEditTableViewController {
 
     private func onDemandCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let field = onDemandFields[indexPath.row]
-        if indexPath.row < 2 {
+        var cutOff = 2
+        #if os(tvOS)
+        cutOff = 1
+        #endif
+        if indexPath.row < cutOff {
             let cell: SwitchCell = tableView.dequeueReusableCell(for: indexPath)
             cell.message = field.localizedUIString
             cell.isOn = onDemandViewModel.isEnabled(field: field)
             cell.onSwitchToggled = { [weak self] isOn in
                 guard let self = self else { return }
                 self.onDemandViewModel.setEnabled(field: field, isEnabled: isOn)
+                #if os(iOS)
                 let section = self.sections.firstIndex { $0 == .onDemand }!
                 let indexPath = IndexPath(row: 2, section: section)
                 if field == .wiFiInterface {
@@ -441,6 +481,7 @@ extension TunnelEditTableViewController {
                         tableView.deleteRows(at: [indexPath], with: .fade)
                     }
                 }
+                #endif
             }
             return cell
         } else {
@@ -466,6 +507,22 @@ extension TunnelEditTableViewController {
 }
 
 extension TunnelEditTableViewController {
+
+    func addPeer(indexPath: IndexPath) {
+        let shouldHideExcludePrivateIPs = (self.tunnelViewModel.peersData.count == 1 && self.tunnelViewModel.peersData[0].shouldAllowExcludePrivateIPsControl)
+        let addedSectionIndices = self.appendEmptyPeer()
+        tableView.performBatchUpdates({
+            tableView.insertSections(addedSectionIndices, with: .fade)
+            if shouldHideExcludePrivateIPs {
+                if let row = self.peerFields.firstIndex(of: .excludePrivateIPs) {
+                    let rowIndexPath = IndexPath(row: row, section: self.interfaceFieldsBySection.count /* First peer section */)
+                    self.tableView.deleteRows(at: [rowIndexPath], with: .fade)
+                }
+            }
+        }, completion: nil)
+    }
+
+    #if os(iOS)
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if case .onDemand = sections[indexPath.section], indexPath.row == 2 {
             return indexPath
@@ -473,17 +530,48 @@ extension TunnelEditTableViewController {
             return nil
         }
     }
-
+    #endif
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? KeyValueCell {
+            cell.valueTextField.becomeFirstResponder()
+            return
+        }
         switch sections[indexPath.section] {
+        case .interface:
+
+            switch indexPath.row {
+            case 2:
+                genKeypair(indexPath)
+            default:
+                NSLog("default")
+            }
+
         case .onDemand:
+            #if os(iOS)
             assert(indexPath.row == 2)
+            #endif
             tableView.deselectRow(at: indexPath, animated: true)
-            let ssidOptionVC = SSIDOptionEditTableViewController(option: onDemandViewModel.ssidOption, ssids: onDemandViewModel.selectedSSIDs)
-            ssidOptionVC.delegate = self
-            navigationController?.pushViewController(ssidOptionVC, animated: true)
+            switch indexPath.row {
+            case 0: // WiFi
+                if let cell = tableView.cellForRow(at: indexPath) as? SwitchCell {
+                    cell.switchView.setOn(!cell.switchView.isOn, animated: false)
+                    cell.switchToggled()
+                    //cell.switchToggled()
+                }
+            case 1, 2: // SSID
+                let ssidOptionVC = SSIDOptionEditTableViewController(option: onDemandViewModel.ssidOption, ssids: onDemandViewModel.selectedSSIDs)
+                ssidOptionVC.delegate = self
+                navigationController?.pushViewController(ssidOptionVC, animated: true)
+            default:
+                NSLog("defaults")
+            }
+
+        case .addPeer:
+            tableView.deselectRow(at: indexPath, animated: true)
+            addPeer(indexPath: indexPath)
+
         default:
-            assertionFailure()
+            NSLog("default")
         }
     }
 }

@@ -460,6 +460,46 @@ public class WireGuardAdapter {
             // no-op
             break
         }
+        #elseif os(tvOS)
+        switch self.state {
+        case .started(let handle, let settingsGenerator):
+            if path.status.isSatisfiable {
+                let (wgConfig, resolutionResults) = settingsGenerator.endpointUapiConfiguration()
+                self.logEndpointResolutionResults(resolutionResults)
+
+                wgSetConfig(handle, wgConfig)
+                wgDisableSomeRoamingForBrokenMobileSemantics(handle)
+                wgBumpSockets(handle)
+            } else {
+                self.logHandler(.verbose, "Connectivity offline, pausing backend.")
+
+                self.state = .temporaryShutdown(settingsGenerator)
+                wgTurnOff(handle)
+            }
+
+        case .temporaryShutdown(let settingsGenerator):
+            guard path.status.isSatisfiable else { return }
+
+            self.logHandler(.verbose, "Connectivity online, resuming backend.")
+
+            do {
+                try self.setNetworkSettings(settingsGenerator.generateNetworkSettings())
+
+                let (wgConfig, resolutionResults) = settingsGenerator.uapiConfiguration()
+                self.logEndpointResolutionResults(resolutionResults)
+
+                self.state = .started(
+                    try self.startWireGuardBackend(wgConfig: wgConfig),
+                    settingsGenerator
+                )
+            } catch {
+                self.logHandler(.error, "Failed to restart backend: \(error.localizedDescription)")
+            }
+
+        case .stopped:
+            // no-op
+            break
+        }
         #else
         #error("Unsupported")
         #endif

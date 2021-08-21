@@ -68,6 +68,8 @@ extension NETunnelProviderProtocol {
             providerConfiguration = ["UID": getuid()]
             #elseif os(iOS)
             providerConfiguration = nil
+            #elseif os(tvOS)
+            providerConfiguration = nil
             #else
             #error("Unimplemented")
             #endif

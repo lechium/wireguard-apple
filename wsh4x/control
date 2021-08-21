@@ -1,0 +1,9 @@
+Package: com.yourcompany.wsh4x
+Name: wsh4x
+Depends: mobilesubstrate
+Version: 0.0.1
+Architecture: appletvos-arm64
+Description: An awesome MobileSubstrate tweak!
+Maintainer: Kevin Bradley
+Author: Kevin Bradley
+Section: Tweaks

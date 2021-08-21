@@ -144,6 +144,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return .terminateCancel
     }
 
+    func application(_ application: NSApplication, open urls: [URL]) {
+        print ("open URLS: \(urls)")
+    }
+
+    func application(_ sender: NSApplication, openFile filename: String) -> Bool {
+        print ("open File: \(filename)")
+        return true
+    }
+
+
     func applicationShouldTerminateAfterLastWindowClosed(_ application: NSApplication) -> Bool {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) { [weak self] in
             self?.setDockIconAndMainMenuVisibility(isVisible: false)

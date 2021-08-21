@@ -19,7 +19,9 @@ class TunnelsListTableViewController: UIViewController {
         let tableView = UITableView(frame: CGRect.zero, style: .plain)
         tableView.estimatedRowHeight = 60
         tableView.rowHeight = UITableView.automaticDimension
+        #if os(iOS)
         tableView.separatorStyle = .none
+        #endif
         tableView.register(TunnelListCell.self)
         return tableView
     }()
@@ -33,11 +35,15 @@ class TunnelsListTableViewController: UIViewController {
 
     let busyIndicator: UIActivityIndicatorView = {
         let busyIndicator: UIActivityIndicatorView
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             busyIndicator = UIActivityIndicatorView(style: .medium)
         } else {
             busyIndicator = UIActivityIndicatorView(style: .gray)
         }
+        #elseif os(tvOS)
+            busyIndicator = UIActivityIndicatorView(style: .white)
+        #endif
         busyIndicator.hidesWhenStopped = true
         return busyIndicator
     }()
@@ -52,7 +58,9 @@ class TunnelsListTableViewController: UIViewController {
     override func loadView() {
         view = UIView()
         if #available(iOS 13.0, *) {
+            #if os(iOS)
             view.backgroundColor = .systemBackground
+            #endif
         } else {
             view.backgroundColor = .white
         }
@@ -82,20 +90,54 @@ class TunnelsListTableViewController: UIViewController {
             centeredAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             centeredAddButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-
         centeredAddButton.onTapped = { [weak self] in
             guard let self = self else { return }
             self.addButtonTapped(sender: self.centeredAddButton)
         }
-
         busyIndicator.startAnimating()
     }
+
+    // Using private API calls here, if anything like this every gets merged into mainline need to gate those calls so App store review doesn't flag these calls
+
+    #if os(tvOS)
+
+    @objc func handleLeftTap(gestureReconizer: UITapGestureRecognizer) {
+        guard let focusedCell = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
+        let ip = tableView.indexPath(for: focusedCell)
+        guard let row = ip?.row else {return}
+        deleteTunnelAtIndex(row)
+    }
+
+    @objc func handleTap(gestureReconizer: UITapGestureRecognizer) {
+        guard let focusedCell = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
+        let ip = tableView.indexPath(for: focusedCell)
+        guard let row = ip?.row else {return}
+        toggleTunnelAtIndex(row)
+
+    }
+
+    func addTapGestureRecognizer() {
+
+        let rightTap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap))
+        rightTap.allowedPressTypes = [NSNumber(value: UIPress.PressType.rightArrow.rawValue), NSNumber(value: UIPress.PressType.playPause.rawValue)]
+        rightTap.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        self.tableView.addGestureRecognizer(rightTap)
+
+        let leftTap = UITapGestureRecognizer(target: self, action: #selector(self.handleLeftTap))
+        leftTap.allowedPressTypes = [NSNumber(value: UIPress.PressType.leftArrow.rawValue)]
+        leftTap.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        self.tableView.addGestureRecognizer(leftTap)
+    }
+    #endif
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableState = .normal
         restorationIdentifier = "TunnelsListVC"
+        #if os(tvOS)
+        addTapGestureRecognizer()
+        #endif
     }
 
     func handleTableStateChange() {
@@ -118,7 +160,9 @@ class TunnelsListTableViewController: UIViewController {
         if case .multiSelect(let selectionCount) = tableState, selectionCount > 0 {
             navigationItem.title = tr(format: "tunnelsListSelectedTitle (%d)", selectionCount)
         } else {
+            #if os(iOS)
             navigationItem.title = tr("tunnelsListTitle")
+            #endif
         }
         if case .multiSelect = tableState {
             tableView.allowsMultipleSelectionDuringEditing = true
@@ -137,15 +181,18 @@ class TunnelsListTableViewController: UIViewController {
     }
 
     override func viewWillAppear(_: Bool) {
+        #if os(iOS)
         if let selectedRowIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedRowIndexPath, animated: false)
         }
+        #endif
     }
 
     @objc func addButtonTapped(sender: AnyObject) {
         guard tunnelsManager != nil else { return }
 
         let alert = UIAlertController(title: "", message: tr("addTunnelMenuHeader"), preferredStyle: .actionSheet)
+        #if os(iOS)
         let importFileAction = UIAlertAction(title: tr("addTunnelMenuImportFile"), style: .default) { [weak self] _ in
             self?.presentViewControllerForFileImport()
         }
@@ -155,7 +202,7 @@ class TunnelsListTableViewController: UIViewController {
             self?.presentViewControllerForScanningQRCode()
         }
         alert.addAction(scanQRCodeAction)
-
+        #endif
         let createFromScratchAction = UIAlertAction(title: tr("addTunnelMenuFromScratch"), style: .default) { [weak self] _ in
             if let self = self, let tunnelsManager = self.tunnelsManager {
                 self.presentViewControllerForTunnelCreation(tunnelsManager: tunnelsManager)
@@ -180,7 +227,9 @@ class TunnelsListTableViewController: UIViewController {
 
         let settingsVC = SettingsTableViewController(tunnelsManager: tunnelsManager)
         let settingsNC = UINavigationController(rootViewController: settingsVC)
+        #if os (iOS)
         settingsNC.modalPresentationStyle = .formSheet
+        #endif
         present(settingsNC, animated: true)
     }
 
@@ -192,18 +241,22 @@ class TunnelsListTableViewController: UIViewController {
     }
 
     func presentViewControllerForFileImport() {
+        #if os (ios)
         let documentTypes = ["com.wireguard.config.quick", String(kUTTypeText), String(kUTTypeZipArchive)]
         let filePicker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         filePicker.delegate = self
         present(filePicker, animated: true)
+        #endif
     }
 
     func presentViewControllerForScanningQRCode() {
+        #if os(iOS)
         let scanQRCodeVC = QRScanViewController()
         scanQRCodeVC.delegate = self
         let scanQRCodeNC = UINavigationController(rootViewController: scanQRCodeVC)
         scanQRCodeNC.modalPresentationStyle = .fullScreen
         present(scanQRCodeNC, animated: true)
+        #endif
     }
 
     @objc func selectButtonTapped() {
@@ -279,7 +332,7 @@ class TunnelsListTableViewController: UIViewController {
         self.presentedViewController?.dismiss(animated: false, completion: nil)
     }
 }
-
+#if os(iOS)
 extension TunnelsListTableViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let tunnelsManager = tunnelsManager else { return }
@@ -300,7 +353,7 @@ extension TunnelsListTableViewController: QRScanViewControllerDelegate {
         }
     }
 }
-
+#endif
 extension TunnelsListTableViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -308,6 +361,40 @@ extension TunnelsListTableViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (tunnelsManager?.numberOfTunnels() ?? 0)
+    }
+
+    @objc func deleteTunnelAtIndex(_ index: Int) {
+        let sender = UIView()
+        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
+        let selectedTunnels = [tunnel]
+        let message = selectedTunnels.count == 1 ?
+            tr(format: "deleteTunnelConfirmationAlertButtonMessage (%d)", selectedTunnels.count) :
+            tr(format: "deleteTunnelsConfirmationAlertButtonMessage (%d)", selectedTunnels.count)
+        let title = tr("deleteTunnelsConfirmationAlertButtonTitle")
+        ConfirmationAlertPresenter.showConfirmationAlert(message: message, buttonTitle: title,
+                                                         from: sender, presentingVC: self) { [weak self] in
+            self?.tunnelsManager?.removeMultiple(tunnels: selectedTunnels) { [weak self] error in
+                guard let self = self else { return }
+                if let error = error {
+                    ErrorPresenter.showErrorAlert(error: error, from: self)
+                    return
+                }
+                self.tableState = .normal
+                self.tableView.setEditing(false, animated: true)
+            }
+        }
+
+    }
+
+    @objc func toggleTunnelAtIndex(_ index: Int) {
+        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
+
+        if tunnel.status == .active {
+            tunnelsManager?.startDeactivation(of: tunnel)
+        } else {
+            tunnelsManager?.startActivation(of: tunnel)
+        }
+
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -337,6 +424,21 @@ extension TunnelsListTableViewController: UITableViewDataSource {
 }
 
 extension TunnelsListTableViewController: UITableViewDelegate {
+    #if os(tvOS)
+    func updateStateDependantViews(_ context: UITableViewFocusUpdateContext) {
+        if let nextIndexPath = context.nextFocusedIndexPath {
+            guard let tunnelsManager = tunnelsManager else { return }
+            let tunnel = tunnelsManager.tunnel(at: nextIndexPath.row)
+            showTunnelDetail(for: tunnel, animated: false)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didUpdateFocusIn context: UITableViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        coordinator.addCoordinatedAnimations({
+            self.updateStateDependantViews(context)
+        }, completion: nil)
+    }
+    #endif
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard !tableView.isEditing else {
             tableState = .multiSelect(selectionCount: tableView.indexPathsForSelectedRows?.count ?? 0)
@@ -344,6 +446,7 @@ extension TunnelsListTableViewController: UITableViewDelegate {
         }
         guard let tunnelsManager = tunnelsManager else { return }
         let tunnel = tunnelsManager.tunnel(at: indexPath.row)
+
         showTunnelDetail(for: tunnel, animated: true)
     }
 
@@ -354,6 +457,7 @@ extension TunnelsListTableViewController: UITableViewDelegate {
         }
     }
 
+    #if os(iOS)
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: tr("tunnelsListSwipeDeleteButtonTitle")) { [weak self] _, _, completionHandler in
@@ -382,6 +486,7 @@ extension TunnelsListTableViewController: UITableViewDelegate {
             tableState = .normal
         }
     }
+    #endif
 }
 
 extension TunnelsListTableViewController: TunnelsManagerListDelegate {
@@ -406,11 +511,13 @@ extension TunnelsListTableViewController: TunnelsManagerListDelegate {
                 (splitViewController.viewControllers[0] as? UINavigationController)?.popToRootViewController(animated: false)
             } else {
                 let detailVC = UIViewController()
+                #if os(iOS)
                 if #available(iOS 13.0, *) {
                     detailVC.view.backgroundColor = .systemBackground
                 } else {
                     detailVC.view.backgroundColor = .white
                 }
+                #endif
                 let detailNC = UINavigationController(rootViewController: detailVC)
                 splitViewController.showDetailViewController(detailNC, sender: self)
             }

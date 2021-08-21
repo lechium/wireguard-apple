@@ -30,7 +30,7 @@ class TunnelEditEditableKeyValueCell: TunnelEditKeyValueCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         copyableGesture = false
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             valueTextField.textColor = .label
         } else {
             valueTextField.textColor = .black

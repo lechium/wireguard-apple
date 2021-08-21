@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#pkd does NOT like being unloaded and reloaded like this, hence the killall instead :(
+
+#launchctl unload /System/Library/LaunchDaemons/com.apple.pluginkit.pkd.plist
+#launchctl load /System/Library/LaunchDaemons/com.apple.pluginkit.pkd.plist
+
+killall -9 pkd

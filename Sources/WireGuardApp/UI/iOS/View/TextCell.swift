@@ -28,11 +28,15 @@ class TextCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         message = ""
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             setTextColor(.label)
         } else {
             setTextColor(.black)
         }
+        //#else
+          //  setTextColor(.black)
+        #endif
         setTextAlignment(.left)
     }
 }

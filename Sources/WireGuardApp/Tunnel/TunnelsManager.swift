@@ -55,7 +55,7 @@ class TunnelsManager {
                 if proto.migrateConfigurationIfNeeded(called: tunnelManager.localizedDescription ?? "unknown") {
                     tunnelManager.saveToPreferences { _ in }
                 }
-                #if os(iOS)
+                #if os(iOS) || os(tvOS)
                 let passwordRef = proto.verifyConfigurationReference() ? proto.passwordReference : nil
                 #elseif os(macOS)
                 let passwordRef: Data?
@@ -76,7 +76,7 @@ class TunnelsManager {
                 }
             }
             Keychain.deleteReferences(except: refs)
-            #if os(iOS)
+            #if os(iOS) || os(tvOS)
             RecentTunnelsTracker.cleanupTunnels(except: tunnelNames)
             #endif
             completionHandler(.success(TunnelsManager(tunnelProviders: tunnelManagers)))
@@ -147,7 +147,7 @@ class TunnelsManager {
 
             guard let self = self else { return }
 
-            #if os(iOS)
+            #if os(iOS) || os(tvOS)
             // HACK: In iOS, adding a tunnel causes deactivation of any currently active tunnel.
             // This is an ugly hack to reactivate the tunnel that has been deactivated like that.
             if let activeTunnel = activeTunnel {
@@ -247,7 +247,7 @@ class TunnelsManager {
                 self.tunnels.sort { TunnelsManager.tunnelNameIsLessThan($0.name, $1.name) }
                 let newIndex = self.tunnels.firstIndex(of: tunnel)!
                 self.tunnelsListDelegate?.tunnelMoved(from: oldIndex, to: newIndex)
-                #if os(iOS)
+                #if os(iOS) || os(tvOS)
                 RecentTunnelsTracker.handleTunnelRenamed(oldName: oldName, newName: tunnelName)
                 #endif
             }
@@ -287,6 +287,8 @@ class TunnelsManager {
         }
         #elseif os(iOS)
         (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
+        #elseif os(tvOS)
+        (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
         #else
         #error("Unimplemented")
         #endif
@@ -302,7 +304,7 @@ class TunnelsManager {
             }
             completionHandler(nil)
 
-            #if os(iOS)
+            #if os(iOS) || os(tvOS)
             RecentTunnelsTracker.handleTunnelRemoved(tunnelName: tunnel.name)
             #endif
         }
@@ -445,7 +447,7 @@ class TunnelsManager {
         tunnel.startActivation(activationDelegate: activationDelegate)
         #endif
 
-        #if os(iOS)
+        #if os(iOS) || os(tvOS)
         RecentTunnelsTracker.handleTunnelActivated(tunnelName: tunnel.name)
         #endif
     }
@@ -479,9 +481,9 @@ class TunnelsManager {
     private func startObservingTunnelStatuses() {
         statusObservationToken = NotificationCenter.default.observe(name: .NEVPNStatusDidChange, object: nil, queue: OperationQueue.main) { [weak self] statusChangeNotification in
             guard let self = self,
-                let session = statusChangeNotification.object as? NETunnelProviderSession,
-                let tunnelProvider = session.manager as? NETunnelProviderManager,
-                let tunnel = self.tunnels.first(where: { $0.tunnelProvider == tunnelProvider }) else { return }
+                  let session = statusChangeNotification.object as? NETunnelProviderSession,
+                  let tunnelProvider = session.manager as? NETunnelProviderManager,
+                  let tunnel = self.tunnels.first(where: { $0.tunnelProvider == tunnelProvider }) else { return }
 
             wg_log(.debug, message: "Tunnel '\(tunnel.name)' connection status changed to '\(tunnel.tunnelProvider.connection.status)'")
 
@@ -649,6 +651,7 @@ class TunnelContainer: NSObject {
                     return
                 }
                 wg_log(.debug, staticMessage: "startActivation: Tunnel saved after re-enabling, invoking startActivation")
+
                 self.startActivation(recursionCount: recursionCount + 1, lastError: NEVPNError(NEVPNError.configurationUnknown), activationDelegate: activationDelegate)
             }
             return

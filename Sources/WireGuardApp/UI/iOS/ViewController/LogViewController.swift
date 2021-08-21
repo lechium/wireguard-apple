@@ -5,9 +5,31 @@ import UIKit
 
 class LogViewController: UIViewController {
 
+    #if os(tvOS)
+    override var preferredFocusEnvironments: [UIFocusEnvironment] {
+        return [saveButton, textView]
+    }
+    #endif
+
+    let saveButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.frame = CGRect(x: 0, y: 0, width: 180, height: 60)
+        button.setTitle("Save", for: .normal)
+        return button
+    }()
+    #if os(tvOS)
+    let menuTapRecognizer: UITapGestureRecognizer = {
+        let mtr = UITapGestureRecognizer(target: self, action: #selector(menuTapped(sender:)))
+        mtr.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
+        mtr.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        return mtr
+    }()
+    #endif
     let textView: UITextView = {
         let textView = UITextView()
+        #if os(iOS)
         textView.isEditable = false
+        #endif
         textView.isSelectable = true
         textView.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)
         textView.adjustsFontForContentSizeCategory = true
@@ -15,6 +37,7 @@ class LogViewController: UIViewController {
     }()
 
     let busyIndicator: UIActivityIndicatorView = {
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             let busyIndicator = UIActivityIndicatorView(style: .medium)
             busyIndicator.hidesWhenStopped = true
@@ -24,6 +47,11 @@ class LogViewController: UIViewController {
             busyIndicator.hidesWhenStopped = true
             return busyIndicator
         }
+        #else
+            let busyIndicator = UIActivityIndicatorView(style: .white)
+            busyIndicator.hidesWhenStopped = true
+            return busyIndicator
+        #endif
     }()
 
     let paragraphStyle: NSParagraphStyle = {
@@ -41,11 +69,17 @@ class LogViewController: UIViewController {
 
     override func loadView() {
         view = UIView()
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             view.backgroundColor = .systemBackground
         } else {
             view.backgroundColor = .white
         }
+        #else
+        textView.isUserInteractionEnabled = true
+        textView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        view.addGestureRecognizer(self.menuTapRecognizer)
+        #endif
 
         view.addSubview(textView)
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,8 +105,47 @@ class LogViewController: UIViewController {
 
     override func viewDidLoad() {
         title = tr("logViewTitle")
+        // A different button is added for tvOS to help with the focus engine
+        #if os(tvOS)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveButton)
+        saveButton.addTarget(self, action: #selector(saveTapped(sender:)), for: .primaryActionTriggered)
+        #else
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveTapped(sender:)))
+        #endif
     }
+
+    // on tvOS I am disabling the 'menu' remote button if the 'Save' button isn't currently focused
+    // this enables the user to have an easy way to change between scrolling the log and getting focus
+    // back on 'Save'
+    #if os(tvOS)
+
+    @objc func menuTapped(sender: AnyObject) {
+        NSLog("menuTapped")
+    }
+
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        for press in presses {
+            if press.type == .menu {
+                if saveButton.isFocused {
+                    super.pressesBegan(presses, with: event)
+                } else {
+                    setNeedsFocusUpdate()
+                }
+            } else {
+                super.pressesBegan(presses, with: event)
+            }
+        }
+    }
+
+    override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        for press in presses {
+            if press.type == .menu {
+            } else {
+                super.pressesEnded(presses, with: event)
+            }
+        }
+    }
+    #endif
 
     func updateLogEntries() {
         guard !isFetchingLogEntries else { return }
@@ -94,6 +167,7 @@ class LogViewController: UIViewController {
             for logEntry in fetchedLogEntries {
                 var bgColor: UIColor
                 var fgColor: UIColor
+                #if os(iOS)
                 if #available(iOS 13.0, *) {
                     bgColor = self.isNextLineHighlighted ? .systemGray3 : .systemBackground
                     fgColor = .label
@@ -101,6 +175,10 @@ class LogViewController: UIViewController {
                     bgColor = self.isNextLineHighlighted ? UIColor(white: 0.88, alpha: 1.0) : UIColor.white
                     fgColor = .black
                 }
+                #else
+                    bgColor = self.isNextLineHighlighted ? UIColor(white: 0.88, alpha: 1.0) : UIColor.white
+                    fgColor = .black
+                #endif
                 let timestampText = NSAttributedString(string: logEntry.timestamp + "\n", attributes: [.font: captionFont, .backgroundColor: bgColor, .foregroundColor: fgColor, .paragraphStyle: self.paragraphStyle])
                 let messageText = NSAttributedString(string: logEntry.message + "\n", attributes: [.font: bodyFont, .backgroundColor: bgColor, .foregroundColor: fgColor, .paragraphStyle: self.paragraphStyle])
                 richText.append(timestampText)
@@ -144,12 +222,12 @@ class LogViewController: UIViewController {
             }
 
             let isWritten = Logger.global?.writeLog(to: destinationURL.path) ?? false
-
             DispatchQueue.main.async {
                 guard isWritten else {
                     ErrorPresenter.showErrorAlert(title: tr("alertUnableToWriteLogTitle"), message: tr("alertUnableToWriteLogMessage"), from: self)
                     return
                 }
+                #if os(iOS)
                 let activityVC = UIActivityViewController(activityItems: [destinationURL], applicationActivities: nil)
                 if let sender = sender as? UIBarButtonItem {
                     activityVC.popoverPresentationController?.barButtonItem = sender
@@ -159,6 +237,9 @@ class LogViewController: UIViewController {
                     _ = FileManager.deleteFile(at: destinationURL)
                 }
                 self.present(activityVC, animated: true)
+                #elseif os(tvOS)
+                AirDropHelper.shared.airdrop(path: destinationURL.path)
+                #endif
             }
         }
     }

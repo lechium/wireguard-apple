@@ -9,11 +9,13 @@ class KeyValueCell: UITableViewCell {
         let keyLabel = UILabel()
         keyLabel.font = UIFont.preferredFont(forTextStyle: .body)
         keyLabel.adjustsFontForContentSizeCategory = true
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             keyLabel.textColor = .label
         } else {
             keyLabel.textColor = .black
         }
+        #endif
         keyLabel.textAlignment = .left
         return keyLabel
     }()
@@ -35,7 +37,7 @@ class KeyValueCell: UITableViewCell {
         valueTextField.autocapitalizationType = .none
         valueTextField.autocorrectionType = .no
         valueTextField.spellCheckingType = .no
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             valueTextField.textColor = .secondaryLabel
         } else {
             valueTextField.textColor = .gray
@@ -64,7 +66,7 @@ class KeyValueCell: UITableViewCell {
 
     var isValueValid = true {
         didSet {
-            if #available(iOS 13.0, *) {
+            if #available(iOS 13.0, tvOS 13.0, *) {
                 if isValueValid {
                     keyLabel.textColor = .label
                 } else {
@@ -127,12 +129,24 @@ class KeyValueCell: UITableViewCell {
         valueLabelScrollView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
+        #if os(tvOS)
+        gestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        #endif
         addGestureRecognizer(gestureRecognizer)
         isUserInteractionEnabled = true
 
         configureForContentSize()
-    }
 
+    }
+    #if os(tvOS)
+    func hideWeirdShadow(field: UITextField) {
+        if let effectClass = NSClassFromString("UIVisualEffectView") {
+            if let shadow = field.findFirstSubviewWithClass(theClass: effectClass) {
+                shadow.alpha = 0
+            }
+        }
+    }
+    #endif
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -170,16 +184,20 @@ class KeyValueCell: UITableViewCell {
     }
 
     @objc func handleTapGesture(_ recognizer: UIGestureRecognizer) {
+        #if os(iOS)
         if !copyableGesture {
             return
         }
+        #endif
         guard recognizer.state == .recognized else { return }
 
         if let recognizerView = recognizer.view,
             let recognizerSuperView = recognizerView.superview, recognizerView.becomeFirstResponder() {
+            #if os(iOS)
             let menuController = UIMenuController.shared
             menuController.setTargetRect(detailTextLabel?.frame ?? recognizerView.frame, in: detailTextLabel?.superview ?? recognizerSuperView)
             menuController.setMenuVisible(true, animated: true)
+            #endif
         }
     }
 
@@ -192,7 +210,9 @@ class KeyValueCell: UITableViewCell {
     }
 
     override func copy(_ sender: Any?) {
+        #if os(iOS)
         UIPasteboard.general.string = valueTextField.text
+        #endif
     }
 
     override func prepareForReuse() {
@@ -208,6 +228,50 @@ class KeyValueCell: UITableViewCell {
         value = ""
         configureForContentSize()
     }
+
+    #if os(tvOS)
+    func updateStateDependantViews() {
+
+        var ogColor: UIColor = .black
+        var ogValueColor: UIColor = .gray
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            if isValueValid {
+                ogColor = .label
+            } else {
+                ogColor = .systemRed
+            }
+            ogValueColor = .secondaryLabel
+        } else {
+            if isValueValid {
+                ogColor = .black // FIXME : this wont work for light mode
+            } else {
+                ogColor = .red
+            }
+            ogValueColor = .gray
+        }
+        if isFocused {
+            keyLabel.textColor = UIColor.black
+            valueTextField.textColor = UIColor.darkGray
+        } else {
+            keyLabel.textColor = ogColor
+            valueTextField.textColor = ogValueColor
+        }
+    }
+
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+        coordinator.addCoordinatedAnimations({
+            self.updateStateDependantViews()
+        }, completion: nil)
+    }
+/*
+    @available(tvOS 14.0, *)
+    override func updateConfiguration(using state: UICellConfigurationState) {
+        self.backgroundConfiguration = UIBackgroundConfiguration.clear()
+    }
+*/
+    #endif
+
 }
 
 extension KeyValueCell: UITextFieldDelegate {

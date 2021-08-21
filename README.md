@@ -1,6 +1,30 @@
-# [WireGuard](https://www.wireguard.com/) for iOS and macOS
+# [WireGuard](https://www.wireguard.com/) for iOS, macOS and tvOS
+This project contains an application for iOS, macOS and tvOS as well as many components shared between the three of them. You may toggle between the three platforms by selecting the target from within Xcode.
 
-This project contains an application for iOS and for macOS, as well as many components shared between the two of them. You may toggle between the two platforms by selecting the target from within Xcode.
+## tvOS Notes
+
+The tvOS functionality is now 1:1 with its iOS / macOS counterparts!
+
+The tvOS support requires a jailbreak to function. there are a lot of 'unavailable' and foribben API's called, in conjunction with code signing entitlements that are not allowed on tvOS. 'ldid2' is used to fake codesign with the necessary entitlements, and to work around some golang jankiness re: tvOS the Makefile for the tvOS bridge is re-written as 2 shell scripts. A new post build script is also added to the new tvOS target to handle code-signing, creating a dpkg and scping over to a host specified in said shell script, some modifications are currently necessary to the tvOS SDK files to enable building in Xcode without code signing.
+
+There is now a handy script to disable tvOS code signing in Xcode. This script will also make sure you have all the pre-requisites installed to build the package via Xcode. (make sure brew, dpkg and ldid2 are all installed)
+
+```
+$ ./disable_TVOS_Codesign.sh
+```
+***The following information is just included for posterity, it should be handled by the script mentioned above!***
+
+The script above will take the file found with the command run below:
+```
+$ open $(xcrun --show-sdk-path --sdk appletvos)/SDKSettings.plist
+```
+And change two string keys from `YES` to `NO` in  `DefaultProperties`: `ENTITLEMENTS_REQUIRED` & `CODE_SIGNING_REQUIRED`
+
+There is a companion JSON file, the values *might* need to be changed in there as well, uncertain about that, if they do indeed need changing they will need to be changed manually for now.
+
+### tvOS 14.7 notes / wsh4x folder
+
+At some point between tvOS 14.4 -> 14.7 Apple made a change that broke this project regarding .appex bundles being registered. The pre-built & bundled Tweak from wsh4x hooks `-(id)pluginsMatchingQuery:(id)arg1 applyFilter:(id)arg2` inside `LSApplicationWorkspace` in the `CoreServices.framework` and force returns the plugin when necessary to address this issue. This should never need to change so its pre-built inside the layout folder that creates the deb package. If you want to build this yourself you will need theos installed and a pretty custom setup at that, which can be done via the nitoClass project found here: https://github.com/lechium/nitoClass
 
 ## Building
 

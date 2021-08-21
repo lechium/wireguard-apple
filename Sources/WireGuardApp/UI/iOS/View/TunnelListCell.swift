@@ -51,16 +51,24 @@ class TunnelListCell: UITableViewCell {
 
     let busyIndicator: UIActivityIndicatorView = {
         let busyIndicator: UIActivityIndicatorView
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             busyIndicator = UIActivityIndicatorView(style: .medium)
         } else {
+            #if os(iOS)
             busyIndicator = UIActivityIndicatorView(style: .gray)
+            #else
+            busyIndicator = UIActivityIndicatorView(style: .white)
+            #endif
         }
         busyIndicator.hidesWhenStopped = true
         return busyIndicator
     }()
 
+    #if os(iOS)
     let statusSwitch = UISwitch()
+    #elseif os(tvOS)
+    let statusSwitch = TVSwitch.new()
+    #endif
 
     private var nameObservationToken: NSKeyValueObservation?
     private var statusObservationToken: NSKeyValueObservation?
@@ -167,4 +175,22 @@ class TunnelListCell: UITableViewCell {
         statusSwitch.isUserInteractionEnabled = false
         busyIndicator.stopAnimating()
     }
+
+    #if os(tvOS)
+    func updateStateDependantViews() {
+        if isFocused {
+                nameLabel.textColor = .black
+        } else {
+            if self.darkMode() {
+                nameLabel.textColor = .white
+            }
+        }
+    }
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+        coordinator.addCoordinatedAnimations({
+            self.updateStateDependantViews()
+        }, completion: nil)
+    }
+    #endif
 }

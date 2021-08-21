@@ -185,11 +185,15 @@ extension SSIDOptionEditTableViewController {
     private func noSSIDsCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell: TextCell = tableView.dequeueReusableCell(for: indexPath)
         cell.message = tr("tunnelOnDemandNoSSIDs")
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             cell.setTextColor(.secondaryLabel)
         } else {
             cell.setTextColor(.gray)
         }
+        #else
+        cell.setTextColor(.gray)
+        #endif
         cell.setTextAlignment(.center)
         return cell
     }
@@ -268,6 +272,8 @@ extension SSIDOptionEditTableViewController {
         #if targetEnvironment(simulator)
         completionHandler("Simulator Wi-Fi")
         #else
+
+        #if os(iOS)
         if #available(iOS 14, *) {
             NEHotspotNetwork.fetchCurrent { hotspotNetwork in
                 completionHandler(hotspotNetwork?.ssid)
@@ -286,6 +292,7 @@ extension SSIDOptionEditTableViewController {
 
             completionHandler(nil)
         }
+        #endif
         #endif
     }
 }

@@ -79,6 +79,9 @@ class SettingsTableViewController: UITableViewController {
         if needsReload {
             tableView.tableFooterView = logo
         }
+        #if os(tvOS)
+        self.clearWeirdBackgrounds()
+        #endif
     }
 
     @objc func doneTapped() {
@@ -102,13 +105,17 @@ class SettingsTableViewController: UITableViewController {
                     return
                 }
 
+                #if os(iOS)
                 let fileExportVC = UIDocumentPickerViewController(url: destinationURL, in: .exportToService)
                 self?.present(fileExportVC, animated: true, completion: nil)
+                #else
+                AirDropHelper.shared.airdrop(path: destinationURL.path)
+                #endif
             }
         }
     }
 
-    func presentLogView() {
+    @objc func presentLogView() {
         let logVC = LogViewController()
         navigationController?.pushViewController(logVC, animated: true)
 
@@ -137,6 +144,10 @@ extension SettingsTableViewController {
         }
     }
 
+    @objc func sendZipFile() {
+       exportConfigurationsAsZipFile(sourceView: UIView())
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let field = settingsFieldsBySection[indexPath.section][indexPath.row]
         if field == .iosAppVersion || field == .goBackendVersion {
@@ -155,6 +166,7 @@ extension SettingsTableViewController {
             return cell
         } else if field == .exportZipArchive {
             let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
+            cell.buttonText = field.localizedUIString
             cell.buttonText = field.localizedUIString
             cell.onTapped = { [weak self] in
                 self?.exportConfigurationsAsZipFile(sourceView: cell.button)

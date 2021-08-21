@@ -254,6 +254,23 @@ class TunnelDetailTableViewController: UITableViewController {
         }
         tableView.reloadSections(IndexSet(integer: onDemandSection), with: .automatic)
     }
+
+    private func toggleTunnelState() {
+        if self.tunnel.status == .active {
+            self.tunnelsManager.startDeactivation(of: self.tunnel)
+        } else {
+            self.tunnelsManager.startActivation(of: self.tunnel)
+        }
+
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        #if os(tvOS)
+        clearWeirdBackgrounds()
+        #endif
+    }
+
 }
 
 extension TunnelDetailTableViewController: TunnelEditTableViewControllerDelegate {
@@ -453,6 +470,20 @@ extension TunnelDetailTableViewController {
         }
     }
 
+    @objc private func showDeleteConfirmation() {
+        ConfirmationAlertPresenter.showConfirmationAlert(message: tr("deleteTunnelConfirmationAlertMessage"),
+                                                         buttonTitle: tr("deleteTunnelConfirmationAlertButtonTitle"),
+                                                         from: UIView(), presentingVC: self) { [weak self] in
+            guard let self = self else { return }
+            self.tunnelsManager.remove(tunnel: self.tunnel) { error in
+                if error != nil {
+                    print("Error removing tunnel: \(String(describing: error))")
+                    return
+                }
+            }
+        }
+    }
+
     private func deleteConfigurationCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
         cell.buttonText = tr("deleteTunnelButtonTitle")
@@ -477,16 +508,24 @@ extension TunnelDetailTableViewController {
 }
 
 extension TunnelDetailTableViewController {
+
+    #if os(iOS)
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if case .onDemand = sections[indexPath.section],
             case .ssid = TunnelDetailTableViewController.onDemandFields[indexPath.row] {
             return indexPath
         }
         return nil
+
     }
+    #endif
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if case .onDemand = sections[indexPath.section],
+        if case .status = sections[indexPath.section] {
+            toggleTunnelState()
+        } else if case .delete = sections[indexPath.section] {
+            showDeleteConfirmation()
+        } else if case .onDemand = sections[indexPath.section],
             case .ssid = TunnelDetailTableViewController.onDemandFields[indexPath.row] {
             let ssidDetailVC = SSIDOptionDetailTableViewController(title: onDemandViewModel.ssidOption.localizedUIString, ssids: onDemandViewModel.selectedSSIDs)
             navigationController?.pushViewController(ssidDetailVC, animated: true)
