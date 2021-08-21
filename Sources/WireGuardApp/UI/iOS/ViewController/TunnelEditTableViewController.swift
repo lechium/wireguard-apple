@@ -79,6 +79,17 @@ class TunnelEditTableViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if tableView.numberOfRows(inSection: 0) > 0 {
+            let ip = IndexPath(row: 0, section: 0)
+            let cell = tableView.cellForRow(at: ip)
+
+        }
+
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         title = tunnel == nil ? tr("newTunnelViewTitle") : tr("editTunnelViewTitle")
@@ -490,6 +501,7 @@ extension TunnelEditTableViewController {
         NSLog("didSelectRowAtIndexPath")
         switch sections[indexPath.section] {
         case .interface:
+            NSLog("interface")
             switch indexPath.row {
             case 0:
                 NSLog("name")
@@ -497,12 +509,31 @@ extension TunnelEditTableViewController {
                 NSLog("private key")
             case 2:
                 NSLog("public key")
+                genKeypair(indexPath)
             case 3:
                 NSLog("gen keypair")
                 genKeypair(indexPath)
             default:
                 NSLog("default")
             }
+            break
+
+        case .peer:
+            NSLog("peer")
+            switch indexPath.row {
+            case 0:
+                NSLog("private key")
+            case 1:
+                NSLog("public key")
+            case 2:
+                NSLog("generate keypair")
+                genKeypair(indexPath)
+            default:
+                NSLog("default")
+            }
+
+            break
+
         case .onDemand:
             assert(indexPath.row == 2)
             tableView.deselectRow(at: indexPath, animated: true)

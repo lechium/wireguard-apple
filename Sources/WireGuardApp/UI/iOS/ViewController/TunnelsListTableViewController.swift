@@ -100,28 +100,20 @@ class TunnelsListTableViewController: UIViewController {
         busyIndicator.startAnimating()
     }
 
-    /*
-     - (void)addlongPressGestureRecognizer {
-     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
-     longPress.allowedPressTypes = @[[NSNumber numberWithInteger:UIPressTypePlayPause],[NSNumber numberWithInteger:UIPressTypeSelect]];
-     [self.tableView addGestureRecognizer:longPress];
-     UITapGestureRecognizer *rightTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
-     rightTap.allowedPressTypes = @[[NSNumber numberWithInteger:UIPressTypePlayPause],[NSNumber numberWithInteger:UIPressTypeRightArrow]];
-     [self.tableView addGestureRecognizer:rightTap];
-     }
-     */
+    // Using private API calls here, if anything like this every gets merged into mainline need to gate those calls so App store review doesn't flag these calls
+
+    #if os(tvOS)
 
     @objc func handleLeftTap(gestureReconizer: UITapGestureRecognizer) {
-        guard let val = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
-        let ip = tableView.indexPath(for: val)
+        guard let focusedCell = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
+        let ip = tableView.indexPath(for: focusedCell)
         guard let row = ip?.row else {return}
         deleteTunnelAtIndex(row)
-
     }
 
     @objc func handleTap(gestureReconizer: UITapGestureRecognizer) {
-        guard let val = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
-        let ip = tableView.indexPath(for: val)
+        guard let focusedCell = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
+        let ip = tableView.indexPath(for: focusedCell)
         guard let row = ip?.row else {return}
         startTunnelAtIndex(row)
 
@@ -139,6 +131,7 @@ class TunnelsListTableViewController: UIViewController {
         leftTap.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
         self.tableView.addGestureRecognizer(leftTap)
     }
+    #endif
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -369,10 +362,31 @@ extension TunnelsListTableViewController: UITableViewDataSource {
     }
 
     @objc func deleteTunnelAtIndex(_ index: Int) {
+        let sender = UIView()
+        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
+        let selectedTunnels = [tunnel]
+        let message = selectedTunnels.count == 1 ?
+            tr(format: "deleteTunnelConfirmationAlertButtonMessage (%d)", selectedTunnels.count) :
+            tr(format: "deleteTunnelsConfirmationAlertButtonMessage (%d)", selectedTunnels.count)
+        let title = tr("deleteTunnelsConfirmationAlertButtonTitle")
+        ConfirmationAlertPresenter.showConfirmationAlert(message: message, buttonTitle: title,
+                                                         from: sender, presentingVC: self) { [weak self] in
+            self?.tunnelsManager?.removeMultiple(tunnels: selectedTunnels) { [weak self] error in
+                guard let self = self else { return }
+                if let error = error {
+                    ErrorPresenter.showErrorAlert(error: error, from: self)
+                    return
+                }
+                self.tableState = .normal
+                self.tableView.setEditing(false, animated: true)
+            }
+        }
+        /*
         guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
         tunnelsManager?.remove(tunnel: tunnel, completionHandler: { (error) in
             NSLog("tunnel removed?")
         })
+         */
     }
 
     @objc func startTunnelAtIndex(_ index: Int) {
