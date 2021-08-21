@@ -115,7 +115,7 @@ class TunnelsListTableViewController: UIViewController {
         guard let focusedCell = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
         let ip = tableView.indexPath(for: focusedCell)
         guard let row = ip?.row else {return}
-        startTunnelAtIndex(row)
+        toggleTunnelAtIndex(row)
 
     }
 
@@ -381,17 +381,18 @@ extension TunnelsListTableViewController: UITableViewDataSource {
                 self.tableView.setEditing(false, animated: true)
             }
         }
-        /*
-        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
-        tunnelsManager?.remove(tunnel: tunnel, completionHandler: { (error) in
-            NSLog("tunnel removed?")
-        })
-         */
+
     }
 
-    @objc func startTunnelAtIndex(_ index: Int) {
+    @objc func toggleTunnelAtIndex(_ index: Int) {
         guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
-        tunnelsManager?.startActivation(of: tunnel)
+
+        if tunnel.status == .active {
+            tunnelsManager?.startDeactivation(of: tunnel)
+        } else {
+            tunnelsManager?.startActivation(of: tunnel)
+        }
+
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
