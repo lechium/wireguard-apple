@@ -86,6 +86,7 @@ class SettingsTableViewController: UITableViewController {
     }
 
     func exportConfigurationsAsZipFile(sourceView: UIView) {
+        #if os(iOS)
         PrivateDataConfirmation.confirmAccess(to: tr("iosExportPrivateData")) { [weak self] in
             guard let self = self else { return }
             guard let tunnelsManager = self.tunnelsManager else { return }
@@ -106,9 +107,10 @@ class SettingsTableViewController: UITableViewController {
                 self?.present(fileExportVC, animated: true, completion: nil)
             }
         }
+        #endif
     }
 
-    func presentLogView() {
+    @objc func presentLogView() {
         let logVC = LogViewController()
         navigationController?.pushViewController(logVC, animated: true)
 

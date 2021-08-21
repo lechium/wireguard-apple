@@ -30,16 +30,24 @@ class TunnelListCell: UITableViewCell {
 
     let busyIndicator: UIActivityIndicatorView = {
         let busyIndicator: UIActivityIndicatorView
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             busyIndicator = UIActivityIndicatorView(style: .medium)
         } else {
+            #if os(iOS)
             busyIndicator = UIActivityIndicatorView(style: .gray)
+            #else
+            busyIndicator = UIActivityIndicatorView(style: .white)
+            #endif
         }
         busyIndicator.hidesWhenStopped = true
         return busyIndicator
     }()
 
+    #if os(iOS)
     let statusSwitch = UISwitch()
+    #elseif os(tvOS)
+    let statusSwitch = UIFLEXSwitch.new()
+    #endif
 
     private var statusObservationToken: NSKeyValueObservation?
     private var nameObservationToken: NSKeyValueObservation?

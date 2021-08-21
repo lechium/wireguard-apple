@@ -695,5 +695,21 @@ private func prettyTime(secondsLeft: Int64) -> String {
         timeStrings.append(seconds == 1 ? tr(format: "tunnelHandshakeTimestampSecond (%d)", seconds) : tr(format: "tunnelHandshakeTimestampSeconds (%d)", seconds))
     }
     return timeStrings.joined(separator: ", ")
+    #elseif os(tvOS)
+    if years > 0 {
+        return years == 1 ? tr(format: "tunnelHandshakeTimestampYear (%d)", years) : tr(format: "tunnelHandshakeTimestampYears (%d)", years)
+    }
+    if days > 0 {
+        return days == 1 ? tr(format: "tunnelHandshakeTimestampDay (%d)", days) : tr(format: "tunnelHandshakeTimestampDays (%d)", days)
+    }
+    if hours > 0 {
+        let hhmmss = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        return tr(format: "tunnelHandshakeTimestampHours hh:mm:ss (%@)", hhmmss)
+    }
+    if minutes > 0 {
+        let mmss = String(format: "%02d:%02d", minutes, seconds)
+        return tr(format: "tunnelHandshakeTimestampMinutes mm:ss (%@)", mmss)
+    }
+    return seconds == 1 ? tr(format: "tunnelHandshakeTimestampSecond (%d)", seconds) : tr(format: "tunnelHandshakeTimestampSeconds (%d)", seconds)
     #endif
 }

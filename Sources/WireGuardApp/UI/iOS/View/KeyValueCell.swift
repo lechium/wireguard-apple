@@ -9,11 +9,15 @@ class KeyValueCell: UITableViewCell {
         let keyLabel = UILabel()
         keyLabel.font = UIFont.preferredFont(forTextStyle: .body)
         keyLabel.adjustsFontForContentSizeCategory = true
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             keyLabel.textColor = .label
         } else {
             keyLabel.textColor = .black
         }
+        #else
+            keyLabel.textColor = .black
+        #endif
         keyLabel.textAlignment = .left
         return keyLabel
     }()
@@ -35,7 +39,7 @@ class KeyValueCell: UITableViewCell {
         valueTextField.autocapitalizationType = .none
         valueTextField.autocorrectionType = .no
         valueTextField.spellCheckingType = .no
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             valueTextField.textColor = .secondaryLabel
         } else {
             valueTextField.textColor = .gray
@@ -64,7 +68,7 @@ class KeyValueCell: UITableViewCell {
 
     var isValueValid = true {
         didSet {
-            if #available(iOS 13.0, *) {
+            if #available(iOS 13.0, tvOS 13.0, *) {
                 if isValueValid {
                     keyLabel.textColor = .label
                 } else {
@@ -177,9 +181,11 @@ class KeyValueCell: UITableViewCell {
 
         if let recognizerView = recognizer.view,
             let recognizerSuperView = recognizerView.superview, recognizerView.becomeFirstResponder() {
+            #if os(iOS)
             let menuController = UIMenuController.shared
             menuController.setTargetRect(detailTextLabel?.frame ?? recognizerView.frame, in: detailTextLabel?.superview ?? recognizerSuperView)
             menuController.setMenuVisible(true, animated: true)
+            #endif
         }
     }
 
@@ -192,7 +198,9 @@ class KeyValueCell: UITableViewCell {
     }
 
     override func copy(_ sender: Any?) {
+        #if os(iOS)
         UIPasteboard.general.string = valueTextField.text
+        #endif
     }
 
     override func prepareForReuse() {

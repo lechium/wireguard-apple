@@ -64,6 +64,8 @@ class TunnelsManager {
                 } else {
                     passwordRef = proto.passwordReference // To handle multiple users in macOS, we skip verifying
                 }
+                #elseif os(tvOS)
+                let passwordRef = proto.verifyConfigurationReference() ? proto.passwordReference : nil
                 #else
                 #error("Unimplemented")
                 #endif
@@ -287,6 +289,8 @@ class TunnelsManager {
         }
         #elseif os(iOS)
         (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
+        #elseif os(tvOS)
+        (tunnelProviderManager.protocolConfiguration as? NETunnelProviderProtocol)?.destroyConfigurationReference()
         #else
         #error("Unimplemented")
         #endif
@@ -374,6 +378,7 @@ class TunnelsManager {
     }
 
     func startActivation(of tunnel: TunnelContainer) {
+        NSLog("startActivation")
         guard tunnels.contains(tunnel) else { return } // Ensure it's not deleted
         guard tunnel.status == .inactive else {
             activationDelegate?.tunnelActivationAttemptFailed(tunnel: tunnel, error: .tunnelIsNotInactive)
@@ -401,6 +406,8 @@ class TunnelsManager {
         #endif
 
         #if os(iOS)
+        RecentTunnelsTracker.handleTunnelActivated(tunnelName: tunnel.name)
+        #elseif os(tvOS)
         RecentTunnelsTracker.handleTunnelActivated(tunnelName: tunnel.name)
         #endif
     }
@@ -598,7 +605,11 @@ class TunnelContainer: NSObject {
                     return
                 }
                 wg_log(.debug, staticMessage: "startActivation: Tunnel saved after re-enabling, invoking startActivation")
+
+                // FIXME: make sure this is fixed after building is working, prob need 'newer' tbd
+                //#if os(iOS)
                 self.startActivation(recursionCount: recursionCount + 1, lastError: NEVPNError(NEVPNError.configurationUnknown), activationDelegate: activationDelegate)
+                //#endif
             }
             return
         }

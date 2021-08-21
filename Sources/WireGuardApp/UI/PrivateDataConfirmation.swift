@@ -2,13 +2,16 @@
 // Copyright © 2018-2021 WireGuard LLC. All Rights Reserved.
 
 import Foundation
+#if !os(tvOS)
 import LocalAuthentication
+#endif
 #if os(macOS)
 import AppKit
 #endif
 
 class PrivateDataConfirmation {
     static func confirmAccess(to reason: String, _ after: @escaping () -> Void) {
+        #if os(iOS)
         let context = LAContext()
 
         var error: NSError?
@@ -33,5 +36,6 @@ class PrivateDataConfirmation {
                 }
             }
         }
+        #endif
     }
 }

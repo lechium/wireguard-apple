@@ -131,6 +131,43 @@ extension Endpoint {
         }
         #elseif os(macOS)
         return self
+        #elseif os(tvOS)
+        let hostname: String
+        switch host {
+        case .name(let name, _):
+            hostname = name
+        case .ipv4(let address):
+            hostname = "\(address)"
+        case .ipv6(let address):
+            hostname = "\(address)"
+        @unknown default:
+            fatalError()
+        }
+
+        var hints = addrinfo()
+        hints.ai_family = AF_UNSPEC
+        hints.ai_socktype = SOCK_DGRAM
+        hints.ai_protocol = IPPROTO_UDP
+        hints.ai_flags = 0 // We set this to zero so that we actually resolve this using DNS64
+
+        var result: UnsafeMutablePointer<addrinfo>?
+        defer {
+            result.flatMap { freeaddrinfo($0) }
+        }
+
+        let errorCode = getaddrinfo(hostname, "\(self.port)", &hints, &result)
+        if errorCode != 0 {
+            throw DNSResolutionError(errorCode: errorCode, address: hostname)
+        }
+
+        let addrInfo = result!.pointee
+        if let ipv4Address = IPv4Address(addrInfo: addrInfo) {
+            return Endpoint(host: .ipv4(ipv4Address), port: port)
+        } else if let ipv6Address = IPv6Address(addrInfo: addrInfo) {
+            return Endpoint(host: .ipv6(ipv6Address), port: port)
+        } else {
+            fatalError()
+        }
         #else
         #error("Unimplemented")
         #endif

@@ -9,4 +9,7 @@
 #import "TargetConditionals.h"
 #if TARGET_OS_OSX
 #include <libproc.h>
+#elif TARGET_OS_TV
+#import "UIFLEXSwitch.h"
+#import "UIView+FLEX_Layout.h"
 #endif

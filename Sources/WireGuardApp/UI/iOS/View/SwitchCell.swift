@@ -16,7 +16,7 @@ class SwitchCell: UITableViewCell {
         get { return switchView.isEnabled }
         set(value) {
             switchView.isEnabled = value
-            if #available(iOS 13.0, *) {
+            if #available(iOS 13.0, tvOS 13.0, *) {
                 textLabel?.textColor = value ? .label : .secondaryLabel
             } else {
                 textLabel?.textColor = value ? .black : .gray
@@ -28,7 +28,11 @@ class SwitchCell: UITableViewCell {
 
     var observationToken: AnyObject?
 
+    #if os(iOS)
     let switchView = UISwitch()
+    #elseif os(tvOS)
+    let switchView = UIFLEXSwitch.new()
+    #endif
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)

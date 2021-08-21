@@ -19,7 +19,9 @@ class TunnelsListTableViewController: UIViewController {
         let tableView = UITableView(frame: CGRect.zero, style: .plain)
         tableView.estimatedRowHeight = 60
         tableView.rowHeight = UITableView.automaticDimension
+        #if os(iOS)
         tableView.separatorStyle = .none
+        #endif
         tableView.register(TunnelListCell.self)
         return tableView
     }()
@@ -33,11 +35,16 @@ class TunnelsListTableViewController: UIViewController {
 
     let busyIndicator: UIActivityIndicatorView = {
         let busyIndicator: UIActivityIndicatorView
+        //FIXME: just getting it building for now
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             busyIndicator = UIActivityIndicatorView(style: .medium)
         } else {
             busyIndicator = UIActivityIndicatorView(style: .gray)
         }
+        #elseif os(tvOS)
+            busyIndicator = UIActivityIndicatorView(style: .white)
+        #endif
         busyIndicator.hidesWhenStopped = true
         return busyIndicator
     }()
@@ -52,7 +59,9 @@ class TunnelsListTableViewController: UIViewController {
     override func loadView() {
         view = UIView()
         if #available(iOS 13.0, *) {
+            #if os(iOS)
             view.backgroundColor = .systemBackground
+            #endif
         } else {
             view.backgroundColor = .white
         }
@@ -180,7 +189,9 @@ class TunnelsListTableViewController: UIViewController {
 
         let settingsVC = SettingsTableViewController(tunnelsManager: tunnelsManager)
         let settingsNC = UINavigationController(rootViewController: settingsVC)
+        #if os (iOS)
         settingsNC.modalPresentationStyle = .formSheet
+        #endif
         present(settingsNC, animated: true)
     }
 
@@ -192,18 +203,22 @@ class TunnelsListTableViewController: UIViewController {
     }
 
     func presentViewControllerForFileImport() {
+        #if os (ios)
         let documentTypes = ["com.wireguard.config.quick", String(kUTTypeText), String(kUTTypeZipArchive)]
         let filePicker = UIDocumentPickerViewController(documentTypes: documentTypes, in: .import)
         filePicker.delegate = self
         present(filePicker, animated: true)
+        #endif
     }
 
     func presentViewControllerForScanningQRCode() {
+        #if os(iOS)
         let scanQRCodeVC = QRScanViewController()
         scanQRCodeVC.delegate = self
         let scanQRCodeNC = UINavigationController(rootViewController: scanQRCodeVC)
         scanQRCodeNC.modalPresentationStyle = .fullScreen
         present(scanQRCodeNC, animated: true)
+        #endif
     }
 
     @objc func selectButtonTapped() {
@@ -279,7 +294,7 @@ class TunnelsListTableViewController: UIViewController {
         self.presentedViewController?.dismiss(animated: false, completion: nil)
     }
 }
-
+#if os(iOS)
 extension TunnelsListTableViewController: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let tunnelsManager = tunnelsManager else { return }
@@ -300,7 +315,7 @@ extension TunnelsListTableViewController: QRScanViewControllerDelegate {
         }
     }
 }
-
+#endif
 extension TunnelsListTableViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -308,6 +323,11 @@ extension TunnelsListTableViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return (tunnelsManager?.numberOfTunnels() ?? 0)
+    }
+
+    @objc func startTunnelAtIndex(_ index: Int) {
+        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return  }
+        tunnelsManager?.startActivation(of: tunnel)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -336,6 +356,7 @@ extension TunnelsListTableViewController: UITableViewDelegate {
         }
         guard let tunnelsManager = tunnelsManager else { return }
         let tunnel = tunnelsManager.tunnel(at: indexPath.row)
+
         showTunnelDetail(for: tunnel, animated: true)
     }
 
@@ -346,6 +367,7 @@ extension TunnelsListTableViewController: UITableViewDelegate {
         }
     }
 
+    #if os(iOS)
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .destructive, title: tr("tunnelsListSwipeDeleteButtonTitle")) { [weak self] _, _, completionHandler in
@@ -374,7 +396,9 @@ extension TunnelsListTableViewController: UITableViewDelegate {
             tableState = .normal
         }
     }
+    #endif
 }
+
 
 extension TunnelsListTableViewController: TunnelsManagerListDelegate {
     func tunnelAdded(at index: Int) {
@@ -398,11 +422,15 @@ extension TunnelsListTableViewController: TunnelsManagerListDelegate {
                 (splitViewController.viewControllers[0] as? UINavigationController)?.popToRootViewController(animated: false)
             } else {
                 let detailVC = UIViewController()
+                #if os(iOS)
                 if #available(iOS 13.0, *) {
                     detailVC.view.backgroundColor = .systemBackground
                 } else {
                     detailVC.view.backgroundColor = .white
                 }
+                #else
+                    detailVC.view.backgroundColor = .white
+                #endif
                 let detailNC = UINavigationController(rootViewController: detailVC)
                 splitViewController.showDetailViewController(detailNC, sender: self)
             }

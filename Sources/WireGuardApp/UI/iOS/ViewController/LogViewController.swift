@@ -7,7 +7,9 @@ class LogViewController: UIViewController {
 
     let textView: UITextView = {
         let textView = UITextView()
+        #if os(iOS)
         textView.isEditable = false
+        #endif
         textView.isSelectable = true
         textView.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.body)
         textView.adjustsFontForContentSizeCategory = true
@@ -15,6 +17,8 @@ class LogViewController: UIViewController {
     }()
 
     let busyIndicator: UIActivityIndicatorView = {
+        //FIXME: just getting it building
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             let busyIndicator = UIActivityIndicatorView(style: .medium)
             busyIndicator.hidesWhenStopped = true
@@ -24,6 +28,11 @@ class LogViewController: UIViewController {
             busyIndicator.hidesWhenStopped = true
             return busyIndicator
         }
+        #else
+            let busyIndicator = UIActivityIndicatorView(style: .white)
+            busyIndicator.hidesWhenStopped = true
+            return busyIndicator
+        #endif
     }()
 
     let paragraphStyle: NSParagraphStyle = {
@@ -41,11 +50,15 @@ class LogViewController: UIViewController {
 
     override func loadView() {
         view = UIView()
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             view.backgroundColor = .systemBackground
         } else {
             view.backgroundColor = .white
         }
+        #else
+            view.backgroundColor = .white
+        #endif
 
         view.addSubview(textView)
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -94,6 +107,7 @@ class LogViewController: UIViewController {
             for logEntry in fetchedLogEntries {
                 var bgColor: UIColor
                 var fgColor: UIColor
+                #if os(iOS)
                 if #available(iOS 13.0, *) {
                     bgColor = self.isNextLineHighlighted ? .systemGray3 : .systemBackground
                     fgColor = .label
@@ -101,6 +115,10 @@ class LogViewController: UIViewController {
                     bgColor = self.isNextLineHighlighted ? UIColor(white: 0.88, alpha: 1.0) : UIColor.white
                     fgColor = .black
                 }
+                #else
+                    bgColor = self.isNextLineHighlighted ? UIColor(white: 0.88, alpha: 1.0) : UIColor.white
+                    fgColor = .black
+                #endif
                 let timestampText = NSAttributedString(string: logEntry.timestamp + "\n", attributes: [.font: captionFont, .backgroundColor: bgColor, .foregroundColor: fgColor, .paragraphStyle: self.paragraphStyle])
                 let messageText = NSAttributedString(string: logEntry.message + "\n", attributes: [.font: bodyFont, .backgroundColor: bgColor, .foregroundColor: fgColor, .paragraphStyle: self.paragraphStyle])
                 richText.append(timestampText)
@@ -150,6 +168,7 @@ class LogViewController: UIViewController {
                     ErrorPresenter.showErrorAlert(title: tr("alertUnableToWriteLogTitle"), message: tr("alertUnableToWriteLogMessage"), from: self)
                     return
                 }
+                #if os(iOS)
                 let activityVC = UIActivityViewController(activityItems: [destinationURL], applicationActivities: nil)
                 if let sender = sender as? UIBarButtonItem {
                     activityVC.popoverPresentationController?.barButtonItem = sender
@@ -159,6 +178,7 @@ class LogViewController: UIViewController {
                     _ = FileManager.deleteFile(at: destinationURL)
                 }
                 self.present(activityVC, animated: true)
+                #endif
             }
         }
     }

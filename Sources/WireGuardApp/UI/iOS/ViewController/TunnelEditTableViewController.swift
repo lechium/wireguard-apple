@@ -208,6 +208,17 @@ extension TunnelEditTableViewController {
         }
     }
 
+    @objc func genKeypair(_ indexPath: IndexPath) {
+        NSLog("genKeypair")
+        self.tunnelViewModel.interfaceData[.privateKey] = PrivateKey().base64Key
+        if let privateKeyRow = self.interfaceFieldsBySection[indexPath.section].firstIndex(of: .privateKey),
+           let publicKeyRow = self.interfaceFieldsBySection[indexPath.section].firstIndex(of: .publicKey) {
+            let privateKeyIndex = IndexPath(row: privateKeyRow, section: indexPath.section)
+            let publicKeyIndex = IndexPath(row: publicKeyRow, section: indexPath.section)
+            self.tableView.reloadRows(at: [privateKeyIndex, publicKeyIndex], with: .fade)
+        }
+    }
+
     private func generateKeyPairCell(for tableView: UITableView, at indexPath: IndexPath, with field: TunnelViewModel.InterfaceField) -> UITableViewCell {
         let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
         cell.buttonText = field.localizedUIString
@@ -466,6 +477,7 @@ extension TunnelEditTableViewController {
 }
 
 extension TunnelEditTableViewController {
+    #if os(iOS)
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if case .onDemand = sections[indexPath.section], indexPath.row == 2 {
             return indexPath
@@ -473,9 +485,24 @@ extension TunnelEditTableViewController {
             return nil
         }
     }
-
+    #endif
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        NSLog("didSelectRowAtIndexPath")
         switch sections[indexPath.section] {
+        case .interface:
+            switch indexPath.row {
+            case 0:
+                NSLog("name")
+            case 1:
+                NSLog("private key")
+            case 2:
+                NSLog("public key")
+            case 3:
+                NSLog("gen keypair")
+                genKeypair(indexPath)
+            default:
+                NSLog("default")
+            }
         case .onDemand:
             assert(indexPath.row == 2)
             tableView.deselectRow(at: indexPath, animated: true)
