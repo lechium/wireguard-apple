@@ -111,9 +111,15 @@ class TunnelsListTableViewController: UIViewController {
      }
      */
 
-    @objc func handleLongPress(gestureReconizer: UITapGestureRecognizer) {
-        NSLog("handleLongPress")
-        //return
+    @objc func handleLeftTap(gestureReconizer: UITapGestureRecognizer) {
+        guard let val = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
+        let ip = tableView.indexPath(for: val)
+        guard let row = ip?.row else {return}
+        deleteTunnelAtIndex(row)
+
+    }
+
+    @objc func handleTap(gestureReconizer: UITapGestureRecognizer) {
         guard let val = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
         let ip = tableView.indexPath(for: val)
         guard let row = ip?.row else {return}
@@ -121,13 +127,17 @@ class TunnelsListTableViewController: UIViewController {
 
     }
 
-    func addlongPressGestureRecognizer() {
+    func addTapGestureRecognizer() {
 
-        let rightTap = UITapGestureRecognizer(target: self, action: #selector(self.handleLongPress))
+        let rightTap = UITapGestureRecognizer(target: self, action: #selector(self.handleTap))
         rightTap.allowedPressTypes = [NSNumber(value: UIPress.PressType.rightArrow.rawValue), NSNumber(value: UIPress.PressType.playPause.rawValue)]
         rightTap.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
-        //longPress.delegate = self
         self.tableView.addGestureRecognizer(rightTap)
+
+        let leftTap = UITapGestureRecognizer(target: self, action: #selector(self.handleLeftTap))
+        leftTap.allowedPressTypes = [NSNumber(value: UIPress.PressType.leftArrow.rawValue)]
+        leftTap.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        self.tableView.addGestureRecognizer(leftTap)
     }
 
     override func viewDidLoad() {
@@ -136,7 +146,7 @@ class TunnelsListTableViewController: UIViewController {
         tableState = .normal
         restorationIdentifier = "TunnelsListVC"
         #if os(tvOS)
-         addlongPressGestureRecognizer()
+        addTapGestureRecognizer()
         #endif
     }
 
@@ -358,8 +368,15 @@ extension TunnelsListTableViewController: UITableViewDataSource {
         return (tunnelsManager?.numberOfTunnels() ?? 0)
     }
 
+    @objc func deleteTunnelAtIndex(_ index: Int) {
+        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
+        tunnelsManager?.remove(tunnel: tunnel, completionHandler: { (error) in
+            NSLog("tunnel removed?")
+        })
+    }
+
     @objc func startTunnelAtIndex(_ index: Int) {
-        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return  }
+        guard let tunnel = tunnelsManager?.tunnel(at: index) else { return }
         tunnelsManager?.startActivation(of: tunnel)
     }
 

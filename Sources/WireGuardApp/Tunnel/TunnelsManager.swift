@@ -80,6 +80,8 @@ class TunnelsManager {
             Keychain.deleteReferences(except: refs)
             #if os(iOS)
             RecentTunnelsTracker.cleanupTunnels(except: tunnelNames)
+            #elseif os(tvOS)
+            RecentTunnelsTracker.cleanupTunnels(except: tunnelNames)
             #endif
             completionHandler(.success(TunnelsManager(tunnelProviders: tunnelManagers)))
         }
@@ -251,6 +253,8 @@ class TunnelsManager {
                 self.tunnelsListDelegate?.tunnelMoved(from: oldIndex, to: newIndex)
                 #if os(iOS)
                 RecentTunnelsTracker.handleTunnelRenamed(oldName: oldName, newName: tunnelName)
+                #elseif os(tvOS)
+                RecentTunnelsTracker.handleTunnelRenamed(oldName: oldName, newName: tunnelName)
                 #endif
             }
             self.tunnelsListDelegate?.tunnelModified(at: self.tunnels.firstIndex(of: tunnel)!)
@@ -307,6 +311,8 @@ class TunnelsManager {
             completionHandler(nil)
 
             #if os(iOS)
+            RecentTunnelsTracker.handleTunnelRemoved(tunnelName: tunnel.name)
+            #elseif os(tvOS)
             RecentTunnelsTracker.handleTunnelRemoved(tunnelName: tunnel.name)
             #endif
         }
@@ -441,9 +447,9 @@ class TunnelsManager {
     private func startObservingTunnelStatuses() {
         statusObservationToken = NotificationCenter.default.observe(name: .NEVPNStatusDidChange, object: nil, queue: OperationQueue.main) { [weak self] statusChangeNotification in
             guard let self = self,
-                let session = statusChangeNotification.object as? NETunnelProviderSession,
-                let tunnelProvider = session.manager as? NETunnelProviderManager,
-                let tunnel = self.tunnels.first(where: { $0.tunnelProvider == tunnelProvider }) else { return }
+                  let session = statusChangeNotification.object as? NETunnelProviderSession,
+                  let tunnelProvider = session.manager as? NETunnelProviderManager,
+                  let tunnel = self.tunnels.first(where: { $0.tunnelProvider == tunnelProvider }) else { return }
 
             wg_log(.debug, message: "Tunnel '\(tunnel.name)' connection status changed to '\(tunnel.tunnelProvider.connection.status)'")
 
@@ -606,10 +612,7 @@ class TunnelContainer: NSObject {
                 }
                 wg_log(.debug, staticMessage: "startActivation: Tunnel saved after re-enabling, invoking startActivation")
 
-                // FIXME: make sure this is fixed after building is working, prob need 'newer' tbd
-                //#if os(iOS)
                 self.startActivation(recursionCount: recursionCount + 1, lastError: NEVPNError(NEVPNError.configurationUnknown), activationDelegate: activationDelegate)
-                //#endif
             }
             return
         }
