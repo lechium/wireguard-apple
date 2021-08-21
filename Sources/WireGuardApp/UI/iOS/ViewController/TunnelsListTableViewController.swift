@@ -100,11 +100,44 @@ class TunnelsListTableViewController: UIViewController {
         busyIndicator.startAnimating()
     }
 
+    /*
+     - (void)addlongPressGestureRecognizer {
+     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
+     longPress.allowedPressTypes = @[[NSNumber numberWithInteger:UIPressTypePlayPause],[NSNumber numberWithInteger:UIPressTypeSelect]];
+     [self.tableView addGestureRecognizer:longPress];
+     UITapGestureRecognizer *rightTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
+     rightTap.allowedPressTypes = @[[NSNumber numberWithInteger:UIPressTypePlayPause],[NSNumber numberWithInteger:UIPressTypeRightArrow]];
+     [self.tableView addGestureRecognizer:rightTap];
+     }
+     */
+
+    @objc func handleLongPress(gestureReconizer: UITapGestureRecognizer) {
+        NSLog("handleLongPress")
+        //return
+        guard let val = gestureReconizer.view?.value(forKey: "_focusedCell") as? UITableViewCell else {return}
+        let ip = tableView.indexPath(for: val)
+        guard let row = ip?.row else {return}
+        startTunnelAtIndex(row)
+
+    }
+
+    func addlongPressGestureRecognizer() {
+
+        let rightTap = UITapGestureRecognizer(target: self, action: #selector(self.handleLongPress))
+        rightTap.allowedPressTypes = [NSNumber(value: UIPress.PressType.rightArrow.rawValue), NSNumber(value: UIPress.PressType.playPause.rawValue)]
+        rightTap.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        //longPress.delegate = self
+        self.tableView.addGestureRecognizer(rightTap)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableState = .normal
         restorationIdentifier = "TunnelsListVC"
+        #if os(tvOS)
+         addlongPressGestureRecognizer()
+        #endif
     }
 
     func handleTableStateChange() {
