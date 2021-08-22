@@ -488,6 +488,21 @@ extension TunnelEditTableViewController {
 }
 
 extension TunnelEditTableViewController {
+
+    func addPeer(indexPath: IndexPath) {
+        let shouldHideExcludePrivateIPs = (self.tunnelViewModel.peersData.count == 1 && self.tunnelViewModel.peersData[0].shouldAllowExcludePrivateIPsControl)
+        let addedSectionIndices = self.appendEmptyPeer()
+        tableView.performBatchUpdates({
+            tableView.insertSections(addedSectionIndices, with: .fade)
+            if shouldHideExcludePrivateIPs {
+                if let row = self.peerFields.firstIndex(of: .excludePrivateIPs) {
+                    let rowIndexPath = IndexPath(row: row, section: self.interfaceFieldsBySection.count /* First peer section */)
+                    self.tableView.deleteRows(at: [rowIndexPath], with: .fade)
+                }
+            }
+        }, completion: nil)
+    }
+
     #if os(iOS)
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if case .onDemand = sections[indexPath.section], indexPath.row == 2 {
@@ -498,12 +513,13 @@ extension TunnelEditTableViewController {
     }
     #endif
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) as? KeyValueCell {
+            cell.valueTextField.becomeFirstResponder()
+            return
+        }
         switch sections[indexPath.section] {
         case .interface:
-            if let cell = tableView.cellForRow(at: indexPath) as? KeyValueCell {
-                cell.valueTextField.becomeFirstResponder()
-                return
-            }
+
             switch indexPath.row {
             case 2:
                 genKeypair(indexPath)
@@ -517,8 +533,14 @@ extension TunnelEditTableViewController {
             let ssidOptionVC = SSIDOptionEditTableViewController(option: onDemandViewModel.ssidOption, ssids: onDemandViewModel.selectedSSIDs)
             ssidOptionVC.delegate = self
             navigationController?.pushViewController(ssidOptionVC, animated: true)
+
+        case .addPeer:
+            tableView.deselectRow(at: indexPath, animated: true)
+            addPeer(indexPath: indexPath)
+
         default:
-            assertionFailure()
+            NSLog("default")
+        //assertionFailure()
         }
     }
 }
