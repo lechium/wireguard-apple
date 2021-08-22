@@ -131,11 +131,20 @@ class KeyValueCell: UITableViewCell {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         #if os(tvOS)
         gestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        hideWeirdShadow(field: valueTextField)
         #endif
         addGestureRecognizer(gestureRecognizer)
         isUserInteractionEnabled = true
 
         configureForContentSize()
+
+    }
+
+    func hideWeirdShadow(field: UITextField) {
+        let effectClass = NSClassFromString("UIVisualEffectView")
+        if let shadow = field.flex_findFirstSubview(with: effectClass) {
+            shadow.alpha = 0
+        }
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -248,6 +257,7 @@ class KeyValueCell: UITableViewCell {
             keyLabel.textColor = ogColor
             valueTextField.textColor = ogValueColor
         }
+        hideWeirdShadow(field: valueTextField)
     }
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
@@ -256,6 +266,12 @@ class KeyValueCell: UITableViewCell {
             self.updateStateDependantViews()
         }, completion: nil)
     }
+/*
+    @available(tvOS 14.0, *)
+    override func updateConfiguration(using state: UICellConfigurationState) {
+        self.backgroundConfiguration = UIBackgroundConfiguration.clear()
+    }
+*/
     #endif
 
 }

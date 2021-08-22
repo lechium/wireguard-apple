@@ -34,8 +34,8 @@ class TextCell: UITableViewCell {
         } else {
             setTextColor(.black)
         }
-        #else
-            setTextColor(.black)
+        //#else
+          //  setTextColor(.black)
         #endif
         setTextAlignment(.left)
     }

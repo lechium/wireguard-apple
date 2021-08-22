@@ -164,7 +164,9 @@ class TunnelsListTableViewController: UIViewController {
         if case .multiSelect(let selectionCount) = tableState, selectionCount > 0 {
             navigationItem.title = tr(format: "tunnelsListSelectedTitle (%d)", selectionCount)
         } else {
+            #if os(iOS)
             navigationItem.title = tr("tunnelsListTitle")
+            #endif
         }
         if case .multiSelect = tableState {
             tableView.allowsMultipleSelectionDuringEditing = true
@@ -466,7 +468,6 @@ extension TunnelsListTableViewController: UITableViewDelegate {
     #endif
 }
 
-
 extension TunnelsListTableViewController: TunnelsManagerListDelegate {
     func tunnelAdded(at index: Int) {
         tableView.insertRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
@@ -495,8 +496,6 @@ extension TunnelsListTableViewController: TunnelsManagerListDelegate {
                 } else {
                     detailVC.view.backgroundColor = .white
                 }
-                #else
-                    detailVC.view.backgroundColor = .white
                 #endif
                 let detailNC = UINavigationController(rootViewController: detailVC)
                 splitViewController.showDetailViewController(detailNC, sender: self)

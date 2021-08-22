@@ -281,7 +281,6 @@ extension TunnelDetailTableViewController: TunnelEditTableViewControllerDelegate
     }
 }
 
-
 extension TunnelDetailTableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count

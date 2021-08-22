@@ -55,7 +55,7 @@ class TunnelsManager {
                 if proto.migrateConfigurationIfNeeded(called: tunnelManager.localizedDescription ?? "unknown") {
                     tunnelManager.saveToPreferences { _ in }
                 }
-                #if os(iOS)
+                #if os(iOS) || os(tvOS)
                 let passwordRef = proto.verifyConfigurationReference() ? proto.passwordReference : nil
                 #elseif os(macOS)
                 let passwordRef: Data?
@@ -64,8 +64,6 @@ class TunnelsManager {
                 } else {
                     passwordRef = proto.passwordReference // To handle multiple users in macOS, we skip verifying
                 }
-                #elseif os(tvOS)
-                let passwordRef = proto.verifyConfigurationReference() ? proto.passwordReference : nil
                 #else
                 #error("Unimplemented")
                 #endif
@@ -78,9 +76,7 @@ class TunnelsManager {
                 }
             }
             Keychain.deleteReferences(except: refs)
-            #if os(iOS)
-            RecentTunnelsTracker.cleanupTunnels(except: tunnelNames)
-            #elseif os(tvOS)
+            #if os(iOS) || os(tvOS)
             RecentTunnelsTracker.cleanupTunnels(except: tunnelNames)
             #endif
             completionHandler(.success(TunnelsManager(tunnelProviders: tunnelManagers)))
@@ -151,7 +147,7 @@ class TunnelsManager {
 
             guard let self = self else { return }
 
-            #if os(iOS)
+            #if os(iOS) || os(tvOS)
             // HACK: In iOS, adding a tunnel causes deactivation of any currently active tunnel.
             // This is an ugly hack to reactivate the tunnel that has been deactivated like that.
             if let activeTunnel = activeTunnel {
@@ -251,9 +247,7 @@ class TunnelsManager {
                 self.tunnels.sort { TunnelsManager.tunnelNameIsLessThan($0.name, $1.name) }
                 let newIndex = self.tunnels.firstIndex(of: tunnel)!
                 self.tunnelsListDelegate?.tunnelMoved(from: oldIndex, to: newIndex)
-                #if os(iOS)
-                RecentTunnelsTracker.handleTunnelRenamed(oldName: oldName, newName: tunnelName)
-                #elseif os(tvOS)
+                #if os(iOS) || os(tvOS)
                 RecentTunnelsTracker.handleTunnelRenamed(oldName: oldName, newName: tunnelName)
                 #endif
             }
@@ -310,9 +304,7 @@ class TunnelsManager {
             }
             completionHandler(nil)
 
-            #if os(iOS)
-            RecentTunnelsTracker.handleTunnelRemoved(tunnelName: tunnel.name)
-            #elseif os(tvOS)
+            #if os(iOS) || os(tvOS)
             RecentTunnelsTracker.handleTunnelRemoved(tunnelName: tunnel.name)
             #endif
         }
@@ -411,9 +403,7 @@ class TunnelsManager {
         tunnel.startActivation(activationDelegate: activationDelegate)
         #endif
 
-        #if os(iOS)
-        RecentTunnelsTracker.handleTunnelActivated(tunnelName: tunnel.name)
-        #elseif os(tvOS)
+        #if os(iOS) || os(tvOS)
         RecentTunnelsTracker.handleTunnelActivated(tunnelName: tunnel.name)
         #endif
     }

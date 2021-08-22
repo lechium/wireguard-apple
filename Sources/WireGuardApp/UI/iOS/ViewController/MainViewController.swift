@@ -17,8 +17,6 @@ class MainViewController: UISplitViewController {
         } else {
             detailVC.view.backgroundColor = .white
         }
-        #else
-            detailVC.view.backgroundColor = .white
         #endif
         let detailNC = UINavigationController(rootViewController: detailVC)
 
