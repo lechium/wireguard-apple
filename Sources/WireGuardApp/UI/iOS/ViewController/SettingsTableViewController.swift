@@ -86,7 +86,6 @@ class SettingsTableViewController: UITableViewController {
     }
 
     func exportConfigurationsAsZipFile(sourceView: UIView) {
-        #if os(iOS)
         PrivateDataConfirmation.confirmAccess(to: tr("iosExportPrivateData")) { [weak self] in
             guard let self = self else { return }
             guard let tunnelsManager = self.tunnelsManager else { return }
@@ -103,11 +102,18 @@ class SettingsTableViewController: UITableViewController {
                     return
                 }
 
+                #if os(iOS)
                 let fileExportVC = UIDocumentPickerViewController(url: destinationURL, in: .exportToService)
                 self?.present(fileExportVC, animated: true, completion: nil)
+                #else
+
+                if let url = URL(string: "airdropper://\(destinationURL.path)?sender=com.nito.wireguard-ios") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+
+                #endif
             }
         }
-        #endif
     }
 
     @objc func presentLogView() {
@@ -139,6 +145,10 @@ extension SettingsTableViewController {
         }
     }
 
+    @objc func sendZipFile() {
+       exportConfigurationsAsZipFile(sourceView: UIView())
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let field = settingsFieldsBySection[indexPath.section][indexPath.row]
         if field == .iosAppVersion || field == .goBackendVersion {
@@ -158,6 +168,10 @@ extension SettingsTableViewController {
         } else if field == .exportZipArchive {
             let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
             cell.buttonText = field.localizedUIString
+            cell.buttonText = field.localizedUIString
+            #if os(tvOS)
+            cell.button.addTarget(self, action: #selector(self.sendZipFile), for: .primaryActionTriggered)
+            #endif
             cell.onTapped = { [weak self] in
                 self?.exportConfigurationsAsZipFile(sourceView: cell.button)
             }

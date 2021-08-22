@@ -58,6 +58,7 @@ class LogViewController: UIViewController {
         }
         #else
             view.backgroundColor = .white
+            textView.panGestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
         #endif
 
         view.addSubview(textView)
@@ -162,7 +163,7 @@ class LogViewController: UIViewController {
             }
 
             let isWritten = Logger.global?.writeLog(to: destinationURL.path) ?? false
-
+            NSLog("log is written")
             DispatchQueue.main.async {
                 guard isWritten else {
                     ErrorPresenter.showErrorAlert(title: tr("alertUnableToWriteLogTitle"), message: tr("alertUnableToWriteLogMessage"), from: self)
@@ -178,6 +179,10 @@ class LogViewController: UIViewController {
                     _ = FileManager.deleteFile(at: destinationURL)
                 }
                 self.present(activityVC, animated: true)
+                #elseif os(tvOS)
+                if let url = URL(string: "airdropper://\(destinationURL.path)?sender=com.nito.wireguard-ios") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
                 #endif
             }
         }
