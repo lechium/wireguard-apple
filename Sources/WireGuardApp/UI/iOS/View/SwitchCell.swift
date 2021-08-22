@@ -60,4 +60,29 @@ class SwitchCell: UITableViewCell {
         isOn = false
         observationToken = nil
     }
+
+    #if os(tvOS)
+    func updateStateDependantViews() {
+        if switchView.isEnabled {
+            if isFocused {
+                textLabel?.textColor = .black
+            } else {
+                textLabel?.textColor = .white
+            }
+        } else {
+            if isFocused {
+                textLabel?.textColor = .darkGray
+            } else {
+                textLabel?.textColor = .gray
+            }
+        }
+    }
+
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+        coordinator.addCoordinatedAnimations({
+            self.updateStateDependantViews()
+        }, completion: nil)
+    }
+    #endif
 }
