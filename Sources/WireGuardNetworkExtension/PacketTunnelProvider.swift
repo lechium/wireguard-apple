@@ -27,7 +27,13 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             completionHandler(PacketTunnelProviderError.savedProtocolConfigurationIsInvalid)
             return
         }
-
+        // below is potential tentative fix for *OS 15, commenting out for now.
+/*
+        if #available(iOS 15.0, tvOS 15.0, *) {
+            protocolConfiguration.includeAllNetworks = true
+            protocolConfiguration.excludeLocalNetworks = true
+        }
+*/
         // Start the tunnel
         adapter.start(tunnelConfiguration: tunnelConfiguration) { adapterError in
             guard let adapterError = adapterError else {

@@ -222,6 +222,43 @@ class KeyValueCell: UITableViewCell {
         value = ""
         configureForContentSize()
     }
+
+    #if os(tvOS)
+    func updateStateDependantViews() {
+
+        var ogColor: UIColor = .black
+        var ogValueColor: UIColor = .gray
+        if #available(iOS 13.0, tvOS 13.0, *) {
+            if isValueValid {
+                ogColor = .label
+            } else {
+                ogColor = .systemRed
+            }
+            ogValueColor = .secondaryLabel
+        } else {
+            if isValueValid {
+                ogColor = .black //FIXME : this wont work for light mode
+            } else {
+                ogColor = .red
+            }
+            ogValueColor = .gray
+        }
+        if isFocused {
+            keyLabel.textColor = UIColor.black
+            valueTextField.textColor = UIColor.darkGray
+        } else {
+            keyLabel.textColor = ogColor
+            valueTextField.textColor = ogValueColor
+        }
+    }
+
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+        coordinator.addCoordinatedAnimations({
+            self.updateStateDependantViews()
+        }, completion: nil)
+    }
+    #endif
 }
 
 extension KeyValueCell: UITextFieldDelegate {

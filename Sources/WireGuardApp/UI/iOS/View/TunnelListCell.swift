@@ -121,4 +121,21 @@ class TunnelListCell: UITableViewCell {
         statusSwitch.isUserInteractionEnabled = false
         busyIndicator.stopAnimating()
     }
+
+    #if os(tvOS)
+    func updateStateDependantViews() {
+        if isFocused {
+            nameLabel.textColor = UIColor.black
+        } else {
+            nameLabel.textColor = UIColor.white
+        }
+    }
+
+    override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        super.didUpdateFocus(in: context, with: coordinator)
+        coordinator.addCoordinatedAnimations({
+            self.updateStateDependantViews()
+        }, completion: nil)
+    }
+    #endif
 }

@@ -82,13 +82,13 @@ API_AVAILABLE(macos(10.11), ios(8.0)) API_UNAVAILABLE(watchos) __WATCHOS_PROHIBI
  * @property excludeLocalNetworks
  * @discussion If YES, all traffic destined for local networks will be excluded from the tunnel. The default is NO on macOS and YES on iOS.
  */
-@property BOOL excludeLocalNetworks API_AVAILABLE(macos(10.15), ios(14.2)) API_UNAVAILABLE(tvos, watchos) __WATCHOS_PROHIBITED;
+@property BOOL excludeLocalNetworks API_AVAILABLE(macos(10.15), ios(14.2)) API_UNAVAILABLE(watchos) __WATCHOS_PROHIBITED;
 
 /*!
  * @property enforceRoutes
  * @discussion If YES, route rules for this tunnel will take precendence over any locally-defined routes. The default is NO.
  */
-@property BOOL enforceRoutes API_AVAILABLE(macos(11.0), ios(14.2)) API_UNAVAILABLE(tvos, watchos) __WATCHOS_PROHIBITED;
+@property BOOL enforceRoutes API_AVAILABLE(macos(11.0), ios(14.2)) API_UNAVAILABLE(watchos) __WATCHOS_PROHIBITED;
 
 @end
 
