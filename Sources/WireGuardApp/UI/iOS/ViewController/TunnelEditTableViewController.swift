@@ -498,41 +498,18 @@ extension TunnelEditTableViewController {
     }
     #endif
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        NSLog("didSelectRowAtIndexPath")
         switch sections[indexPath.section] {
         case .interface:
-            NSLog("interface")
+            if let cell = tableView.cellForRow(at: indexPath) as? KeyValueCell {
+                cell.valueTextField.becomeFirstResponder()
+                return
+            }
             switch indexPath.row {
-            case 0:
-                NSLog("name")
-            case 1:
-                NSLog("private key")
             case 2:
-                NSLog("public key")
-                genKeypair(indexPath)
-            case 3:
-                NSLog("gen keypair")
                 genKeypair(indexPath)
             default:
                 NSLog("default")
             }
-            break
-
-        case .peer:
-            NSLog("peer")
-            switch indexPath.row {
-            case 0:
-                NSLog("private key")
-            case 1:
-                NSLog("public key")
-            case 2:
-                NSLog("generate keypair")
-                genKeypair(indexPath)
-            default:
-                NSLog("default")
-            }
-
-            break
 
         case .onDemand:
             assert(indexPath.row == 2)

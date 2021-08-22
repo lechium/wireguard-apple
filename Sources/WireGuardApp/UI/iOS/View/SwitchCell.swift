@@ -37,6 +37,9 @@ class SwitchCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
 
+        #if os(tvOS)
+        switchView.frame = CGRect(x: 0, y: 0, width: 150, height: 87)
+        #endif
         accessoryView = switchView
         switchView.addTarget(self, action: #selector(switchToggled), for: .valueChanged)
     }

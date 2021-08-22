@@ -11,6 +11,11 @@ import AppKit
 
 class PrivateDataConfirmation {
     static func confirmAccess(to reason: String, _ after: @escaping () -> Void) {
+
+        #if os(tvOS)
+        after()
+        #endif
+
         #if os(iOS)
         let context = LAContext()
 

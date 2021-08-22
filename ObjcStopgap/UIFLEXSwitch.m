@@ -4,6 +4,7 @@
 @interface UIFLEXSwitch() {
     BOOL _isOn;
 }
+@property UITapGestureRecognizer *tapGestureRecognizer;
 @end
 
 @implementation UIFLEXSwitch
@@ -14,6 +15,16 @@
 
 - (void)initDefaults {
     self.onTintColor = [UIColor greenColor];
+    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(switchToggled:)];
+    self.tapGestureRecognizer.allowedPressTypes = @[[NSNumber numberWithInteger:UIPressTypePlayPause]];
+    [self addGestureRecognizer:self.tapGestureRecognizer];
+}
+
+- (void)switchToggled:(UITapGestureRecognizer *)gestureRecognizer {
+    NSLog(@"switch toggled!");
+    if(gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        [self setOn:!self.isOn];
+    }
 }
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
@@ -76,6 +87,15 @@
     if (bgView) {
         bgView.backgroundColor = backgroundColor;
     }
+}
+
+- (CGSize)intrinsicContentSize {
+    CGSize og = [super intrinsicContentSize];
+    NSLog(@"og: %@", NSStringFromCGSize(og));
+    if (og.width == 0 || og.height == 0){
+        return CGSizeMake(150, 87);
+    }
+    return og;
 }
 
 - (void)layoutSubviews {

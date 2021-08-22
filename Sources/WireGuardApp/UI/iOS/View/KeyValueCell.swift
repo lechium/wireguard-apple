@@ -131,6 +131,9 @@ class KeyValueCell: UITableViewCell {
         valueLabelScrollView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
+        #if os(tvOS)
+        gestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
+        #endif
         addGestureRecognizer(gestureRecognizer)
         isUserInteractionEnabled = true
 
@@ -174,9 +177,12 @@ class KeyValueCell: UITableViewCell {
     }
 
     @objc func handleTapGesture(_ recognizer: UIGestureRecognizer) {
+        #if os(iOS)
         if !copyableGesture {
             return
         }
+        #endif
+        NSLog("out here")
         guard recognizer.state == .recognized else { return }
 
         if let recognizerView = recognizer.view,
