@@ -91,12 +91,13 @@ class TunnelsListTableViewController: UIViewController {
             centeredAddButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             centeredAddButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-
         centeredAddButton.onTapped = { [weak self] in
             guard let self = self else { return }
             self.addButtonTapped(sender: self.centeredAddButton)
         }
-
+        #if os(tvOS)
+        centeredAddButton.button.addTarget(self, action: #selector(addButtonTapped(sender:)), for: .primaryActionTriggered)
+        #endif
         busyIndicator.startAnimating()
     }
 
@@ -191,6 +192,7 @@ class TunnelsListTableViewController: UIViewController {
         guard tunnelsManager != nil else { return }
 
         let alert = UIAlertController(title: "", message: tr("addTunnelMenuHeader"), preferredStyle: .actionSheet)
+        #if os(iOS)
         let importFileAction = UIAlertAction(title: tr("addTunnelMenuImportFile"), style: .default) { [weak self] _ in
             self?.presentViewControllerForFileImport()
         }
@@ -200,7 +202,7 @@ class TunnelsListTableViewController: UIViewController {
             self?.presentViewControllerForScanningQRCode()
         }
         alert.addAction(scanQRCodeAction)
-
+        #endif
         let createFromScratchAction = UIAlertAction(title: tr("addTunnelMenuFromScratch"), style: .default) { [weak self] _ in
             if let self = self, let tunnelsManager = self.tunnelsManager {
                 self.presentViewControllerForTunnelCreation(tunnelsManager: tunnelsManager)
