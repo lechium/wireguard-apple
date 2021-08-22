@@ -1,8 +1,8 @@
 Package: com.nito.wireguard
 Name: WireGuard
 Pre-Depends: cy+model.appletv
-Depends: firmware (>= 9.0)
-Version: 1.0
+Depends: firmware (>= 12.0)
+Version: 1.0-1
 Architecture: appletvos-arm64
 Description: WireGuard for tvOS
 Maintainer: Kevin Bradley

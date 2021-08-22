@@ -125,12 +125,13 @@ class TunnelListCell: UITableViewCell {
     #if os(tvOS)
     func updateStateDependantViews() {
         if isFocused {
-            nameLabel.textColor = UIColor.black
+                nameLabel.textColor = .black
         } else {
-            nameLabel.textColor = UIColor.white
+            if self.darkMode() {
+                nameLabel.textColor = .white
+            }
         }
     }
-
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
         super.didUpdateFocus(in: context, with: coordinator)
         coordinator.addCoordinatedAnimations({

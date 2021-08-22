@@ -15,8 +15,6 @@ class KeyValueCell: UITableViewCell {
         } else {
             keyLabel.textColor = .black
         }
-        #else
-            keyLabel.textColor = .black
         #endif
         keyLabel.textAlignment = .left
         return keyLabel
@@ -259,6 +257,7 @@ class KeyValueCell: UITableViewCell {
         }, completion: nil)
     }
     #endif
+
 }
 
 extension KeyValueCell: UITextFieldDelegate {
