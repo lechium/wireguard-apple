@@ -1,0 +1,5 @@
+* Replace #if os(iOS) / #elif os(tvOS) instances with joint | parameter when applicable
+* Add *OS 15 fixes from: https://lore.kernel.org/wireguard/A28ECC96-A28E-425E-90E3-E3C4D1B2E3E2@mullvad.net/T/
+* Fix focus text color jakniness in table views
+* Make any necessary tvOS UI modifications / improvements
+
