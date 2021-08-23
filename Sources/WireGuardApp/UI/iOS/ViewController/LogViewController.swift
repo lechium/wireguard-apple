@@ -113,16 +113,16 @@ class LogViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveTapped(sender:)))
         #endif
     }
-    
+
     // on tvOS I am disabling the 'menu' remote button if the 'Save' button isn't currently focused
     // this enables the user to have an easy way to change between scrolling the log and getting focus
     // back on 'Save'
     #if os(tvOS)
-    
+
     @objc func menuTapped(sender: AnyObject) {
         NSLog("menuTapped")
     }
-    
+
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         for press in presses {
             if press.type == .menu {
@@ -146,7 +146,7 @@ class LogViewController: UIViewController {
         }
     }
     #endif
-    
+
     func updateLogEntries() {
         guard !isFetchingLogEntries else { return }
         isFetchingLogEntries = true

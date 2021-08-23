@@ -182,9 +182,11 @@ class TunnelsListTableViewController: UIViewController {
     }
 
     override func viewWillAppear(_: Bool) {
+        #if os(iOS)
         if let selectedRowIndexPath = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: selectedRowIndexPath, animated: false)
         }
+        #endif
     }
 
     @objc func addButtonTapped(sender: AnyObject) {
@@ -415,6 +417,21 @@ extension TunnelsListTableViewController: UITableViewDataSource {
 }
 
 extension TunnelsListTableViewController: UITableViewDelegate {
+    #if os(tvOS)
+    func updateStateDependantViews(_ context: UITableViewFocusUpdateContext) {
+        if let nextIndexPath = context.nextFocusedIndexPath {
+            guard let tunnelsManager = tunnelsManager else { return }
+            let tunnel = tunnelsManager.tunnel(at: nextIndexPath.row)
+            showTunnelDetail(for: tunnel, animated: false)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, didUpdateFocusIn context: UITableViewFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {
+        coordinator.addCoordinatedAnimations({
+            self.updateStateDependantViews(context)
+        }, completion: nil)
+    }
+    #endif
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard !tableView.isEditing else {
             tableState = .multiSelect(selectionCount: tableView.indexPathsForSelectedRows?.count ?? 0)

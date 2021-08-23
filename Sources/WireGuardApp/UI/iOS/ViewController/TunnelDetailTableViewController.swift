@@ -462,6 +462,21 @@ extension TunnelDetailTableViewController {
 }
 
 extension TunnelDetailTableViewController {
+
+    override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let theCell = cell as? KeyValueCell {
+            NSLog("didEndDisplaying cell")
+            theCell.hideWeirdShadow(field: theCell.valueTextField)
+        }
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let theCell = cell as? KeyValueCell {
+            NSLog("KeyValueCell cell")
+            theCell.hideWeirdShadow(field: theCell.valueTextField)
+        }
+    }
+
     #if os(iOS)
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         if case .onDemand = sections[indexPath.section],

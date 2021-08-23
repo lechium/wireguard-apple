@@ -1,4 +1,16 @@
 #import "UIView+FLEX_Layout.h"
+#import <objc/runtime.h>
+
+@implementation UIButton (setRealBackground)
+
+- (void)setRealBackgroundColor:(UIColor *)backgroundColor {
+    UIView *bgView = [self flex_findFirstSubviewWithClass:objc_getClass("_UIVisualEffectSubview")]; //this class has been around since tvOS 9, so this is definitely safe.
+    if (bgView) {
+        bgView.backgroundColor = backgroundColor;
+    }
+}
+
+@end
 
 @implementation UIView (FLEX_Layout)
 
