@@ -227,6 +227,9 @@ class KeyValueCell: UITableViewCell {
         key = ""
         value = ""
         configureForContentSize()
+        #if os(tvOS)
+        hideWeirdShadow(field: valueTextField)
+        #endif
     }
 
     #if os(tvOS)

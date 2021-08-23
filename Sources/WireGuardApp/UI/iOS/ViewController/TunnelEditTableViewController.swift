@@ -42,12 +42,18 @@ class TunnelEditTableViewController: UITableViewController {
         .allowedIPs, .excludePrivateIPs, .persistentKeepAlive,
         .deletePeer
     ]
-
+    #if os(iOS)
     let onDemandFields: [ActivateOnDemandViewModel.OnDemandField] = [
         .nonWiFiInterface,
         .wiFiInterface,
         .ssid
     ]
+    #else
+    let onDemandFields: [ActivateOnDemandViewModel.OnDemandField] = [
+        .wiFiInterface,
+        .ssid
+    ]
+    #endif
 
     let tunnelsManager: TunnelsManager
     let tunnel: TunnelContainer?
@@ -173,11 +179,15 @@ extension TunnelEditTableViewController {
         case .addPeer:
             return 1
         case .onDemand:
+            #if os(tvOS)
+                return 2
+            #else
             if onDemandViewModel.isWiFiInterfaceEnabled {
                 return 3
             } else {
                 return 2
             }
+            #endif
         }
     }
 
@@ -453,6 +463,7 @@ extension TunnelEditTableViewController {
             cell.onSwitchToggled = { [weak self] isOn in
                 guard let self = self else { return }
                 self.onDemandViewModel.setEnabled(field: field, isEnabled: isOn)
+                #if os(iOS)
                 let section = self.sections.firstIndex { $0 == .onDemand }!
                 let indexPath = IndexPath(row: 2, section: section)
                 if field == .wiFiInterface {
@@ -462,6 +473,7 @@ extension TunnelEditTableViewController {
                         tableView.deleteRows(at: [indexPath], with: .fade)
                     }
                 }
+                #endif
             }
             return cell
         } else {
@@ -527,11 +539,26 @@ extension TunnelEditTableViewController {
             }
 
         case .onDemand:
+            #if os(iOS)
             assert(indexPath.row == 2)
+            #endif
             tableView.deselectRow(at: indexPath, animated: true)
-            let ssidOptionVC = SSIDOptionEditTableViewController(option: onDemandViewModel.ssidOption, ssids: onDemandViewModel.selectedSSIDs)
-            ssidOptionVC.delegate = self
-            navigationController?.pushViewController(ssidOptionVC, animated: true)
+            switch indexPath.row {
+            case 0: // WiFi
+                NSLog("WiFi")
+                if let cell = tableView.cellForRow(at: indexPath) as? SwitchCell {
+                    cell.switchView.setOn(!cell.switchView.isOn, animated: false)
+                    cell.switchToggled()
+                    //cell.switchToggled()
+                }
+            case 1, 2: // SSID
+                NSLog("SSID")
+                let ssidOptionVC = SSIDOptionEditTableViewController(option: onDemandViewModel.ssidOption, ssids: onDemandViewModel.selectedSSIDs)
+                ssidOptionVC.delegate = self
+                navigationController?.pushViewController(ssidOptionVC, animated: true)
+            default:
+                NSLog("defaults")
+            }
 
         case .addPeer:
             tableView.deselectRow(at: indexPath, animated: true)
@@ -539,7 +566,6 @@ extension TunnelEditTableViewController {
 
         default:
             NSLog("default")
-        //assertionFailure()
         }
     }
 }
