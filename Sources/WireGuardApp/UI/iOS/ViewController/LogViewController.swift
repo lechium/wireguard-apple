@@ -13,8 +13,7 @@ class LogViewController: UIViewController {
 
     let saveButton: UIButton = {
         let button = UIButton(type: .system)
-        button.frame = CGRect(x: 0, y: 0, width: 200, height: 100)
-        button.target(forAction: #selector(saveTapped(sender:)), withSender: self)
+        button.frame = CGRect(x: 0, y: 0, width: 180, height: 60)
         button.setTitle("Save", for: .normal)
         return button
     }()
@@ -107,7 +106,8 @@ class LogViewController: UIViewController {
     override func viewDidLoad() {
         title = tr("logViewTitle")
         #if os(tvOS)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: self.saveButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: saveButton)
+        saveButton.addTarget(self, action: #selector(saveTapped(sender:)), for: .primaryActionTriggered)
         #else
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(saveTapped(sender:)))
         #endif
@@ -197,6 +197,7 @@ class LogViewController: UIViewController {
     }
 
     @objc func saveTapped(sender: AnyObject) {
+        NSLog("saveTapped")
         guard let destinationDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
 
         let dateFormatter = ISO8601DateFormatter()

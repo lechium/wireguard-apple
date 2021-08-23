@@ -169,9 +169,6 @@ extension SettingsTableViewController {
             let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
             cell.buttonText = field.localizedUIString
             cell.buttonText = field.localizedUIString
-            #if os(tvOS)
-            cell.button.addTarget(self, action: #selector(self.sendZipFile), for: .primaryActionTriggered)
-            #endif
             cell.onTapped = { [weak self] in
                 self?.exportConfigurationsAsZipFile(sourceView: cell.button)
             }
@@ -179,9 +176,6 @@ extension SettingsTableViewController {
         } else if field == .viewLog {
             let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
             cell.buttonText = field.localizedUIString
-            #if os(tvOS)
-            cell.button.addTarget(self, action: #selector(self.presentLogView), for: .primaryActionTriggered)
-            #endif
             cell.onTapped = { [weak self] in
                 self?.presentLogView()
             }

@@ -36,8 +36,11 @@ class BorderedTextButton: UIView {
             button.centerXAnchor.constraint(equalTo: centerXAnchor),
             button.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
-
+        #if os (iOS)
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        #elseif os (tvOS)
+        button.addTarget(self, action: #selector(buttonTapped), for: .primaryActionTriggered)
+        #endif
     }
 
     required init?(coder aDecoder: NSCoder) {

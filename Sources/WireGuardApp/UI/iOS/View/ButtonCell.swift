@@ -34,8 +34,11 @@ class ButtonCell: UITableViewCell {
             contentView.layoutMarginsGuide.bottomAnchor.constraint(equalTo: button.bottomAnchor),
             button.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
         ])
-
+        #if os (iOS)
         button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        #elseif os (tvOS)
+        button.addTarget(self, action: #selector(buttonTapped), for: .primaryActionTriggered)
+        #endif
     }
 
     @objc func buttonTapped() {

@@ -95,9 +95,6 @@ class TunnelsListTableViewController: UIViewController {
             guard let self = self else { return }
             self.addButtonTapped(sender: self.centeredAddButton)
         }
-        #if os(tvOS)
-        centeredAddButton.button.addTarget(self, action: #selector(addButtonTapped(sender:)), for: .primaryActionTriggered)
-        #endif
         busyIndicator.startAnimating()
     }
 

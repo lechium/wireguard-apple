@@ -442,9 +442,6 @@ extension TunnelDetailTableViewController {
         let cell: ButtonCell = tableView.dequeueReusableCell(for: indexPath)
         cell.buttonText = tr("deleteTunnelButtonTitle")
         cell.hasDestructiveAction = true
-        #if os(tvOS)
-        cell.button.addTarget(self, action: #selector(self.showDeleteConfirmation), for: .primaryActionTriggered)
-        #endif
         cell.onTapped = { [weak self] in
             guard let self = self else { return }
             ConfirmationAlertPresenter.showConfirmationAlert(message: tr("deleteTunnelConfirmationAlertMessage"),
