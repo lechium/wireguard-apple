@@ -28,13 +28,17 @@
 
 - (instancetype)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
-    self = [TVSwitch newSwitch];
+    if (self) {
+        [self initDefaults];
+    }
     return self;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
-    self = [TVSwitch newSwitch]; //immediatly replace with this one
+    if (self) {
+        [self initDefaults];
+    }
     return self;
 }
 

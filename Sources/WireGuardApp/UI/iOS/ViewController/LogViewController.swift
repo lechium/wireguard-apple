@@ -238,9 +238,7 @@ class LogViewController: UIViewController {
                 }
                 self.present(activityVC, animated: true)
                 #elseif os(tvOS)
-                if let url = URL(string: "airdropper://\(destinationURL.path)?sender=com.nito.wireguard-ios") {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                }
+                AirDropHelper.shared.airdropPath(path: destinationURL.path)
                 #endif
             }
         }

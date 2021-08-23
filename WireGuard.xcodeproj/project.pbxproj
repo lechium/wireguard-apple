@@ -11,6 +11,7 @@
 		325367A526D3928F00C83CB3 /* UITableViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325367A326D3928F00C83CB3 /* UITableViewController+Extension.swift */; };
 		325367BC26D3950800C83CB3 /* UIView+FindSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325367BB26D3950800C83CB3 /* UIView+FindSubview.swift */; };
 		325367BD26D3950800C83CB3 /* UIView+FindSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325367BB26D3950800C83CB3 /* UIView+FindSubview.swift */; };
+		325367C626D3993300C83CB3 /* AirDropHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325367C526D3993300C83CB3 /* AirDropHelper.swift */; };
 		3285808126CDAEAD0046153B /* LocalizationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE1765921C90E87002690EA /* LocalizationHelper.swift */; };
 		3285808326CDAEAD0046153B /* InterfaceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585B10462577E293004F691E /* InterfaceConfiguration.swift */; };
 		3285808426CDAEAD0046153B /* ringlogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FF3526C21C23F960008484E /* ringlogger.c */; };
@@ -412,6 +413,7 @@
 		3253675326D1B28300C83CB3 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		325367A326D3928F00C83CB3 /* UITableViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Extension.swift"; sourceTree = "<group>"; };
 		325367BB26D3950800C83CB3 /* UIView+FindSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+FindSubview.swift"; sourceTree = "<group>"; };
+		325367C526D3993300C83CB3 /* AirDropHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirDropHelper.swift; sourceTree = "<group>"; };
 		328580D026CDAEAD0046153B /* WireGuardtvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireGuardtvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		328580D126CDAEAE0046153B /* WireGuardiOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WireGuardiOS copy-Info.plist"; path = "/Users/kevinbradley/Projects/wireguard-apple/WireGuardiOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		32A298F526D04146001FA9B9 /* UIView+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extras.m"; sourceTree = "<group>"; };
@@ -652,6 +654,7 @@
 				325367A326D3928F00C83CB3 /* UITableViewController+Extension.swift */,
 				3253675326D1B28300C83CB3 /* Media.xcassets */,
 				32A2994726D04612001FA9B9 /* LaunchScreen.storyboard */,
+				325367C526D3993300C83CB3 /* AirDropHelper.swift */,
 			);
 			path = tvOS;
 			sourceTree = "<group>";
@@ -1619,6 +1622,7 @@
 				3285808126CDAEAD0046153B /* LocalizationHelper.swift in Sources */,
 				3285808326CDAEAD0046153B /* InterfaceConfiguration.swift in Sources */,
 				3285808426CDAEAD0046153B /* ringlogger.c in Sources */,
+				325367C626D3993300C83CB3 /* AirDropHelper.swift in Sources */,
 				3285808526CDAEAD0046153B /* EditableTextCell.swift in Sources */,
 				3285808626CDAEAD0046153B /* PeerConfiguration.swift in Sources */,
 				3285808726CDAEAD0046153B /* Logger.swift in Sources */,

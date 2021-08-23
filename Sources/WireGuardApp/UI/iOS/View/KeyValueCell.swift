@@ -256,7 +256,7 @@ class KeyValueCell: UITableViewCell {
             keyLabel.textColor = ogColor
             valueTextField.textColor = ogValueColor
         }
-        hideWeirdShadow(field: valueTextField)
+        //hideWeirdShadow(field: valueTextField)
     }
 
     override func didUpdateFocus(in context: UIFocusUpdateContext, with coordinator: UIFocusAnimationCoordinator) {

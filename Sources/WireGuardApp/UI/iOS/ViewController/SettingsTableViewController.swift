@@ -109,11 +109,7 @@ class SettingsTableViewController: UITableViewController {
                 let fileExportVC = UIDocumentPickerViewController(url: destinationURL, in: .exportToService)
                 self?.present(fileExportVC, animated: true, completion: nil)
                 #else
-
-                if let url = URL(string: "airdropper://\(destinationURL.path)?sender=com.nito.wireguard-ios") {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                }
-
+                AirDropHelper.shared.airdropPath(path: destinationURL.path)
                 #endif
             }
         }
