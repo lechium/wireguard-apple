@@ -7,9 +7,5 @@
 @end
 
 @interface UIView (findSubview)
-
 - (UIView *)wg_findFirstSubviewWithClass:(Class)theClass;
-#if TARGET_OS_TV
-- (BOOL)darkMode;
-#endif
 @end

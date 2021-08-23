@@ -140,9 +140,10 @@ class KeyValueCell: UITableViewCell {
     }
 
     func hideWeirdShadow(field: UITextField) {
-        let effectClass = NSClassFromString("UIVisualEffectView")
-        if let shadow = field.wg_findFirstSubview(with: effectClass) {
-            shadow.alpha = 0
+        if let effectClass = NSClassFromString("UIVisualEffectView") {
+            if let shadow = field.findFirstSubviewWithClass(theClass: effectClass) {
+                shadow.alpha = 0
+            }
         }
     }
 

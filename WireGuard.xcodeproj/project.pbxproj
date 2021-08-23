@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		3253675426D1B28300C83CB3 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3253675326D1B28300C83CB3 /* Media.xcassets */; };
 		325367A526D3928F00C83CB3 /* UITableViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325367A326D3928F00C83CB3 /* UITableViewController+Extension.swift */; };
+		325367BC26D3950800C83CB3 /* UIView+FindSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325367BB26D3950800C83CB3 /* UIView+FindSubview.swift */; };
+		325367BD26D3950800C83CB3 /* UIView+FindSubview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 325367BB26D3950800C83CB3 /* UIView+FindSubview.swift */; };
 		3285808126CDAEAD0046153B /* LocalizationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE1765921C90E87002690EA /* LocalizationHelper.swift */; };
 		3285808326CDAEAD0046153B /* InterfaceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585B10462577E293004F691E /* InterfaceConfiguration.swift */; };
 		3285808426CDAEAD0046153B /* ringlogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FF3526C21C23F960008484E /* ringlogger.c */; };
@@ -409,6 +411,7 @@
 /* Begin PBXFileReference section */
 		3253675326D1B28300C83CB3 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		325367A326D3928F00C83CB3 /* UITableViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Extension.swift"; sourceTree = "<group>"; };
+		325367BB26D3950800C83CB3 /* UIView+FindSubview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+FindSubview.swift"; sourceTree = "<group>"; };
 		328580D026CDAEAD0046153B /* WireGuardtvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireGuardtvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		328580D126CDAEAE0046153B /* WireGuardiOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WireGuardiOS copy-Info.plist"; path = "/Users/kevinbradley/Projects/wireguard-apple/WireGuardiOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		32A298F526D04146001FA9B9 /* UIView+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extras.m"; sourceTree = "<group>"; };
@@ -786,6 +789,7 @@
 				6FBA103A21D6B4280051C35F /* ErrorPresenterProtocol.swift */,
 				6B62E45E220A6FA900EF34A6 /* PrivateDataConfirmation.swift */,
 				6F907C9B224663A2003CED21 /* LogViewHelper.swift */,
+				325367BB26D3950800C83CB3 /* UIView+FindSubview.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1660,6 +1664,7 @@
 				328580AD26CDAEAD0046153B /* TunnelDetailTableViewController.swift in Sources */,
 				328580AE26CDAEAD0046153B /* WireGuardResult.swift in Sources */,
 				328580AF26CDAEAD0046153B /* TunnelEditTableViewController.swift in Sources */,
+				325367BD26D3950800C83CB3 /* UIView+FindSubview.swift in Sources */,
 				328580B026CDAEAD0046153B /* ErrorPresenterProtocol.swift in Sources */,
 				328580B126CDAEAD0046153B /* NotificationToken.swift in Sources */,
 				328580B226CDAEAD0046153B /* IPAddressRange.swift in Sources */,
@@ -1918,6 +1923,7 @@
 				6F7774E1217181B1006A79B3 /* MainViewController.swift in Sources */,
 				6FFA5DA42197085D0001E2F7 /* ActivateOnDemandOption.swift in Sources */,
 				5F4541B221CBFAEE00994C13 /* String+ArrayConversion.swift in Sources */,
+				325367BC26D3950800C83CB3 /* UIView+FindSubview.swift in Sources */,
 				585B108A2577E294004F691E /* Endpoint.swift in Sources */,
 				6F907C9C224663A2003CED21 /* LogViewHelper.swift in Sources */,
 			);
