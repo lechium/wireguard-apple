@@ -456,7 +456,11 @@ extension TunnelEditTableViewController {
 
     private func onDemandCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
         let field = onDemandFields[indexPath.row]
-        if indexPath.row < 2 {
+        var cutOff = 2
+        #if os(tvOS)
+        cutOff = 1
+        #endif
+        if indexPath.row < cutOff {
             let cell: SwitchCell = tableView.dequeueReusableCell(for: indexPath)
             cell.message = field.localizedUIString
             cell.isOn = onDemandViewModel.isEnabled(field: field)
