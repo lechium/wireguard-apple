@@ -20,7 +20,7 @@ class ActivateOnDemandViewModel {
                 #elseif os(macOS)
                 return tr("tunnelOnDemandEthernet")
                 #else
-                return tr("tunnelOnDemandNothing") // FIXME: i dunno lol
+                return tr("tunnelOnDemandEmpty")
                 #endif
             case .wiFiInterface: return tr("tunnelOnDemandWiFi")
             case .ssid: return tr("tunnelOnDemandSSIDsKey")
@@ -128,8 +128,7 @@ extension ActivateOnDemandViewModel {
             #elseif os(macOS)
             return tr("tunnelOnDemandOptionWiFiOrEthernet")
             #else
-            return tr("tunnelOnDemandOptionWiFi") //FIXME: not sure
-            //#error("Unimplemented")
+            return tr("tunnelOnDemandOptionWiFi")
             #endif
         }
     }

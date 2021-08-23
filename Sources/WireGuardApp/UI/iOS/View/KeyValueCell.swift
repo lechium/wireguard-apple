@@ -246,7 +246,7 @@ class KeyValueCell: UITableViewCell {
             ogValueColor = .secondaryLabel
         } else {
             if isValueValid {
-                ogColor = .black //FIXME : this wont work for light mode
+                ogColor = .black // FIXME : this wont work for light mode
             } else {
                 ogColor = .red
             }

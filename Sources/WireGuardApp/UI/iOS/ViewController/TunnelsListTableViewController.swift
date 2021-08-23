@@ -35,7 +35,6 @@ class TunnelsListTableViewController: UIViewController {
 
     let busyIndicator: UIActivityIndicatorView = {
         let busyIndicator: UIActivityIndicatorView
-        //FIXME: just getting it building for now
         #if os(iOS)
         if #available(iOS 13.0, *) {
             busyIndicator = UIActivityIndicatorView(style: .medium)
