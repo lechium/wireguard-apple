@@ -85,17 +85,19 @@ class TunnelEditTableViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if tableView.numberOfRows(inSection: 0) > 0 {
             let ip = IndexPath(row: 0, section: 0)
             let cell = tableView.cellForRow(at: ip)
-
         }
-
     }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        clearWeirdBackgrounds()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = tunnel == nil ? tr("newTunnelViewTitle") : tr("editTunnelViewTitle")
@@ -549,14 +551,12 @@ extension TunnelEditTableViewController {
             tableView.deselectRow(at: indexPath, animated: true)
             switch indexPath.row {
             case 0: // WiFi
-                NSLog("WiFi")
                 if let cell = tableView.cellForRow(at: indexPath) as? SwitchCell {
                     cell.switchView.setOn(!cell.switchView.isOn, animated: false)
                     cell.switchToggled()
                     //cell.switchToggled()
                 }
             case 1, 2: // SSID
-                NSLog("SSID")
                 let ssidOptionVC = SSIDOptionEditTableViewController(option: onDemandViewModel.ssidOption, ssids: onDemandViewModel.selectedSSIDs)
                 ssidOptionVC.delegate = self
                 navigationController?.pushViewController(ssidOptionVC, animated: true)

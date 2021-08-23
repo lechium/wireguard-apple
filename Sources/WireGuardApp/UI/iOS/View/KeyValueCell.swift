@@ -131,7 +131,6 @@ class KeyValueCell: UITableViewCell {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         #if os(tvOS)
         gestureRecognizer.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.indirect.rawValue)]
-        hideWeirdShadow(field: valueTextField)
         #endif
         addGestureRecognizer(gestureRecognizer)
         isUserInteractionEnabled = true
@@ -227,9 +226,6 @@ class KeyValueCell: UITableViewCell {
         key = ""
         value = ""
         configureForContentSize()
-        #if os(tvOS)
-        hideWeirdShadow(field: valueTextField)
-        #endif
     }
 
     #if os(tvOS)

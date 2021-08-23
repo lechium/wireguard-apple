@@ -79,6 +79,9 @@ class SettingsTableViewController: UITableViewController {
         if needsReload {
             tableView.tableFooterView = logo
         }
+
+        self.clearWeirdBackgrounds()
+
     }
 
     @objc func doneTapped() {
@@ -148,13 +151,7 @@ extension SettingsTableViewController {
     @objc func sendZipFile() {
        exportConfigurationsAsZipFile(sourceView: UIView())
     }
-/*
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let theCell = cell as? ButtonCell {
-            // theCell.button.setRealBackgroundColor(.clear)
-        }
-    }
-*/
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let field = settingsFieldsBySection[indexPath.section][indexPath.row]
         if field == .iosAppVersion || field == .goBackendVersion {
