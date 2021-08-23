@@ -7,15 +7,20 @@ The tvOS functionality is now 1:1 with its iOS / macOS counterparts!
 
 The tvOS support requires a jailbreak to function. there are a lot of 'unavailable' and foribben API's called, in conjunction with code signing entitlements that are not allowed on tvOS. 'ldid2' is used to fake codesign with the necessary entitlements, and to work around some golang jankiness re: tvOS the Makefile for the tvOS bridge is re-written as 2 shell scripts. A new post build script is also added to the new tvOS target to handle code-signing, creating a dpkg and scping over to a host specified in said shell script, some modifications are currently necessary to the tvOS SDK files to enable building in Xcode without code signing.
 
-Open the necessary file to edit using the command below:
+There is now a handy script to disable tvOS code signing in Xcode.
 
+```
+$ ./disable_TVOS_Codesign.sh
+```
+***The following information is just included for posterity, it should be handled by the script mentioned above!***
+
+The script above will take the file found with the command run below:
 ```
 $ open $(xcrun --show-sdk-path --sdk appletvos)/SDKSettings.plist
 ```
+And change two string keys from `YES` to `NO` in  `DefaultProperties`: `ENTITLEMENTS_REQUIRED` & `CODE_SIGNING_REQUIRED`
 
-Two string keys need changing from `YES` to `NO` in  `DefaultProperties`: `ENTITLEMENTS_REQUIRED` & `CODE_SIGNING_REQUIRED`
-
-There is a companion JSON file, the values *might* need to be changed in there as well, uncertain about that.
+There is a companion JSON file, the values *might* need to be changed in there as well, uncertain about that, if they do indeed need changing they will need to be changed manually for now.
 
 ## Building
 

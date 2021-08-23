@@ -6,9 +6,9 @@
 - (void)setRealBackgroundColor:(UIColor *)color;
 @end
 
-@interface UIView (FLEX_Layout)
+@interface UIView (findSubview)
 
-- (UIView *)flex_findFirstSubviewWithClass:(Class)theClass;
+- (UIView *)wg_findFirstSubviewWithClass:(Class)theClass;
 #if TARGET_OS_TV
 - (BOOL)darkMode;
 #endif

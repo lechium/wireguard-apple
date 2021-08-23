@@ -46,7 +46,7 @@ class TunnelListCell: UITableViewCell {
     #if os(iOS)
     let statusSwitch = UISwitch()
     #elseif os(tvOS)
-    let statusSwitch = UIFLEXSwitch.new()
+    let statusSwitch = TVSwitch.new()
     #endif
 
     private var statusObservationToken: NSKeyValueObservation?

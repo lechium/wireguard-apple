@@ -1,10 +1,10 @@
-#import "UIView+FLEX_Layout.h"
+#import "UIView+Extras.h"
 #import <objc/runtime.h>
 
 @implementation UIButton (setRealBackground)
 
 - (void)setRealBackgroundColor:(UIColor *)backgroundColor {
-    UIView *bgView = [self flex_findFirstSubviewWithClass:objc_getClass("_UIVisualEffectSubview")]; //this class has been around since tvOS 9, so this is definitely safe.
+    UIView *bgView = [self wg_findFirstSubviewWithClass:objc_getClass("_UIVisualEffectSubview")]; //this class has been around since tvOS 9, so this is definitely safe.
     if (bgView) {
         bgView.backgroundColor = backgroundColor;
     }
@@ -12,7 +12,7 @@
 
 @end
 
-@implementation UIView (FLEX_Layout)
+@implementation UIView (findSubview)
 
 #if TARGET_OS_TV
 #pragma clang diagnostic push
@@ -29,13 +29,13 @@
 }
 #endif
 
-- (UIView *)flex_findFirstSubviewWithClass:(Class)theClass {
+- (UIView *)wg_findFirstSubviewWithClass:(Class)theClass {
     if ([self isMemberOfClass:theClass]) {
         return self;
     }
     
     for (UIView *v in self.subviews) {
-        UIView *theView = [v flex_findFirstSubviewWithClass:theClass];
+        UIView *theView = [v wg_findFirstSubviewWithClass:theClass];
         if (theView != nil) {
             return theView;
         }

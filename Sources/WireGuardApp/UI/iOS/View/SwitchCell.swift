@@ -31,7 +31,7 @@ class SwitchCell: UITableViewCell {
     #if os(iOS)
     let switchView = UISwitch()
     #elseif os(tvOS)
-    let switchView = UIFLEXSwitch.new()
+    let switchView = TVSwitch.new()
     #endif
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

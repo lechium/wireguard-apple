@@ -76,8 +76,8 @@
 		328580C826CDAEAD0046153B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FF4AC1E211EC472002C96EB /* Assets.xcassets */; };
 		328580C926CDAEAD0046153B /* wireguard_doc_logo_64x64.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F919ED7218C65C50023B400 /* wireguard_doc_logo_64x64.png */; };
 		328580CA26CDAEAD0046153B /* wireguard_doc_logo_320x320.png in Resources */ = {isa = PBXBuildFile; fileRef = 6F919ED8218C65C50023B400 /* wireguard_doc_logo_320x320.png */; };
-		32A298F926D04147001FA9B9 /* UIView+FLEX_Layout.m in Sources */ = {isa = PBXBuildFile; fileRef = 32A298F526D04146001FA9B9 /* UIView+FLEX_Layout.m */; };
-		32A298FA26D04147001FA9B9 /* UIFLEXSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 32A298F826D04147001FA9B9 /* UIFLEXSwitch.m */; };
+		32A298F926D04147001FA9B9 /* UIView+Extras.m in Sources */ = {isa = PBXBuildFile; fileRef = 32A298F526D04146001FA9B9 /* UIView+Extras.m */; };
+		32A298FA26D04147001FA9B9 /* TVSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 32A298F826D04147001FA9B9 /* TVSwitch.m */; };
 		32A2994926D04612001FA9B9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 32A2994726D04612001FA9B9 /* LaunchScreen.storyboard */; };
 		32A2995926D0471F001FA9B9 /* ringlogger.c in Sources */ = {isa = PBXBuildFile; fileRef = 6FF3526C21C23F960008484E /* ringlogger.c */; };
 		32A2995A26D0471F001FA9B9 /* WireGuardAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585B104B2577E293004F691E /* WireGuardAdapter.swift */; };
@@ -409,10 +409,10 @@
 		3253675326D1B28300C83CB3 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		328580D026CDAEAD0046153B /* WireGuardtvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireGuardtvOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		328580D126CDAEAE0046153B /* WireGuardiOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WireGuardiOS copy-Info.plist"; path = "/Users/kevinbradley/Projects/wireguard-apple/WireGuardiOS copy-Info.plist"; sourceTree = "<absolute>"; };
-		32A298F526D04146001FA9B9 /* UIView+FLEX_Layout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FLEX_Layout.m"; sourceTree = "<group>"; };
-		32A298F626D04146001FA9B9 /* UIFLEXSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIFLEXSwitch.h; sourceTree = "<group>"; };
-		32A298F726D04147001FA9B9 /* UIView+FLEX_Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FLEX_Layout.h"; sourceTree = "<group>"; };
-		32A298F826D04147001FA9B9 /* UIFLEXSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIFLEXSwitch.m; sourceTree = "<group>"; };
+		32A298F526D04146001FA9B9 /* UIView+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Extras.m"; sourceTree = "<group>"; };
+		32A298F626D04146001FA9B9 /* TVSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TVSwitch.h; sourceTree = "<group>"; };
+		32A298F726D04147001FA9B9 /* UIView+Extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Extras.h"; sourceTree = "<group>"; };
+		32A298F826D04147001FA9B9 /* TVSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TVSwitch.m; sourceTree = "<group>"; };
 		32A2994826D04612001FA9B9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		32A2997726D0471F001FA9B9 /* WireGuardNetworkExtensiontvOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WireGuardNetworkExtensiontvOS.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		32A2997826D04723001FA9B9 /* WireGuardNetworkExtensioniOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WireGuardNetworkExtensioniOS copy-Info.plist"; path = "/Users/kevinbradley/Projects/wireguard-apple/WireGuardNetworkExtensioniOS copy-Info.plist"; sourceTree = "<absolute>"; };
@@ -630,15 +630,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		32A298F426D04146001FA9B9 /* ObjcStopgap */ = {
+		32A298F426D04146001FA9B9 /* ObjC */ = {
 			isa = PBXGroup;
 			children = (
-				32A298F626D04146001FA9B9 /* UIFLEXSwitch.h */,
-				32A298F826D04147001FA9B9 /* UIFLEXSwitch.m */,
-				32A298F726D04147001FA9B9 /* UIView+FLEX_Layout.h */,
-				32A298F526D04146001FA9B9 /* UIView+FLEX_Layout.m */,
+				32A298F626D04146001FA9B9 /* TVSwitch.h */,
+				32A298F826D04147001FA9B9 /* TVSwitch.m */,
+				32A298F726D04147001FA9B9 /* UIView+Extras.h */,
+				32A298F526D04146001FA9B9 /* UIView+Extras.m */,
 			);
-			path = ObjcStopgap;
+			path = ObjC;
 			sourceTree = "<group>";
 		};
 		32A2994626D04612001FA9B9 /* tvOS */ = {
@@ -935,7 +935,7 @@
 			children = (
 				6F70E20C221058DF008BDFB4 /* InfoPlist.strings */,
 				6FE1765421C90BBE002690EA /* Localizable.strings */,
-				32A298F426D04146001FA9B9 /* ObjcStopgap */,
+				32A298F426D04146001FA9B9 /* ObjC */,
 				6F5D0C432183B4A4000F85AD /* Shared */,
 				6FF4AC16211EC46F002C96EB /* WireGuardApp */,
 				6F5D0C1B218352EF000F85AD /* WireGuardNetworkExtension */,
@@ -1620,7 +1620,7 @@
 				3285808A26CDAEAD0046153B /* TunnelsManager.swift in Sources */,
 				3285808B26CDAEAD0046153B /* UITableViewCell+Reuse.swift in Sources */,
 				3285808C26CDAEAD0046153B /* CheckmarkCell.swift in Sources */,
-				32A298F926D04147001FA9B9 /* UIView+FLEX_Layout.m in Sources */,
+				32A298F926D04147001FA9B9 /* UIView+Extras.m in Sources */,
 				3285808D26CDAEAD0046153B /* ZipExporter.swift in Sources */,
 				3285808E26CDAEAD0046153B /* ActivateOnDemandViewModel.swift in Sources */,
 				3285808F26CDAEAD0046153B /* SSIDOptionEditTableViewController.swift in Sources */,
@@ -1633,7 +1633,7 @@
 				3285809726CDAEAD0046153B /* AppDelegate.swift in Sources */,
 				3285809826CDAEAD0046153B /* ioapi.c in Sources */,
 				3285809926CDAEAD0046153B /* TunnelErrors.swift in Sources */,
-				32A298FA26D04147001FA9B9 /* UIFLEXSwitch.m in Sources */,
+				32A298FA26D04147001FA9B9 /* TVSwitch.m in Sources */,
 				3285809A26CDAEAD0046153B /* zip.c in Sources */,
 				3285809B26CDAEAD0046153B /* Keychain.swift in Sources */,
 				3285809C26CDAEAD0046153B /* TunnelViewModel.swift in Sources */,

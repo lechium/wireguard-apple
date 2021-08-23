@@ -2,7 +2,7 @@
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 
-@interface UIFLEXSwitch : UIButton <NSCoding>
+@interface TVSwitch : UIButton <NSCoding>
 @property(nullable, nonatomic, strong) UIColor *onTintColor;
 @property(nullable, nonatomic, strong) UIColor *thumbTintColor; //here for protocol adherence - ignored
 @property(nullable, nonatomic, strong) UIImage *onImage; //ditto above
