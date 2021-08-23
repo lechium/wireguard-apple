@@ -5,8 +5,8 @@ import Foundation
 
 class AirDropHelper {
     static var shared = AirDropHelper()
-    
-    func airdropPath(path: String) {
+
+    func airdrop(path: String) {
         if let bundleID = Bundle.main.bundleIdentifier {
             let fullString = "airdropper://\(path)?sender=\(bundleID)"
             if let url = URL(string: fullString) {

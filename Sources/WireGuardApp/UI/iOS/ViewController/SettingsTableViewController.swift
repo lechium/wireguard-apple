@@ -109,7 +109,7 @@ class SettingsTableViewController: UITableViewController {
                 let fileExportVC = UIDocumentPickerViewController(url: destinationURL, in: .exportToService)
                 self?.present(fileExportVC, animated: true, completion: nil)
                 #else
-                AirDropHelper.shared.airdropPath(path: destinationURL.path)
+                AirDropHelper.shared.airdrop(path: destinationURL.path)
                 #endif
             }
         }

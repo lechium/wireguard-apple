@@ -238,7 +238,7 @@ class LogViewController: UIViewController {
                 }
                 self.present(activityVC, animated: true)
                 #elseif os(tvOS)
-                AirDropHelper.shared.airdropPath(path: destinationURL.path)
+                AirDropHelper.shared.airdrop(path: destinationURL.path)
                 #endif
             }
         }
