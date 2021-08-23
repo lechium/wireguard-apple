@@ -475,10 +475,8 @@ extension TunnelDetailTableViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if case .status = sections[indexPath.section] {
-            NSLog("status clicked!")
             toggleTunnelState()
         } else if case .delete = sections[indexPath.section] {
-            NSLog("delete clicked!")
             showDeleteConfirmation()
         } else if case .onDemand = sections[indexPath.section],
             case .ssid = TunnelDetailTableViewController.onDemandFields[indexPath.row] {

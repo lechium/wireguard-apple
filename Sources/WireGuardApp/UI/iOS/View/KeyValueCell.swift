@@ -189,7 +189,6 @@ class KeyValueCell: UITableViewCell {
             return
         }
         #endif
-        NSLog("out here")
         guard recognizer.state == .recognized else { return }
 
         if let recognizerView = recognizer.view,

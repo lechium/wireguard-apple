@@ -220,7 +220,6 @@ extension TunnelEditTableViewController {
     }
 
     @objc func genKeypair(_ indexPath: IndexPath) {
-        NSLog("genKeypair")
         self.tunnelViewModel.interfaceData[.privateKey] = PrivateKey().base64Key
         if let privateKeyRow = self.interfaceFieldsBySection[indexPath.section].firstIndex(of: .privateKey),
            let publicKeyRow = self.interfaceFieldsBySection[indexPath.section].firstIndex(of: .publicKey) {

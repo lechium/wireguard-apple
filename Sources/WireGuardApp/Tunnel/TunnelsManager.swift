@@ -376,7 +376,6 @@ class TunnelsManager {
     }
 
     func startActivation(of tunnel: TunnelContainer) {
-        NSLog("startActivation")
         guard tunnels.contains(tunnel) else { return } // Ensure it's not deleted
         guard tunnel.status == .inactive else {
             activationDelegate?.tunnelActivationAttemptFailed(tunnel: tunnel, error: .tunnelIsNotInactive)

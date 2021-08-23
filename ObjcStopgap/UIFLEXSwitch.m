@@ -21,7 +21,6 @@
 }
 
 - (void)switchToggled:(UITapGestureRecognizer *)gestureRecognizer {
-    NSLog(@"switch toggled!");
     if(gestureRecognizer.state == UIGestureRecognizerStateEnded) {
         [self setOn:!self.isOn];
     }
@@ -91,7 +90,6 @@
 
 - (CGSize)intrinsicContentSize {
     CGSize og = [super intrinsicContentSize];
-    NSLog(@"og: %@", NSStringFromCGSize(og));
     if (og.width == 0 || og.height == 0){
         return CGSizeMake(150, 87);
     }
