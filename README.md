@@ -1,7 +1,9 @@
 # [WireGuard](https://www.wireguard.com/) for iOS, macOS and tvOS
-This project contains an application for iOS, macOS, and experimental unfinished support for tvOS as well as many components shared between the two of them. You may toggle between the two platforms by selecting the target from within Xcode.
+This project contains an application for iOS, macOS and tvOS as well as many components shared between the three of them. You may toggle between the three platforms by selecting the target from within Xcode.
 
 ## tvOS Notes
+
+The tvOS functionality is now 1:1 with its iOS / macOS counterparts!
 
 The tvOS support requires a jailbreak to function. there are a lot of 'unavailable' and foribben API's called, in conjunction with code signing entitlements that are not allowed on tvOS. 'ldid2' is used to fake codesign with the necessary entitlements, and to work around some golang jankiness re: tvOS the Makefile for the tvOS bridge is re-written as 2 shell scripts. A new post build script is also added to the new tvOS target to handle code-signing, creating a dpkg and scping over to a host specified in said shell script, some modifications are currently necessary to the tvOS SDK files to enable building in Xcode without code signing.
 
