@@ -83,8 +83,8 @@ extension NETunnelProviderProtocol {
             providerConfiguration = ["UID": getuid()]
             return true
         }
-        #elseif os(iOS)
-        if #available(iOS 15, *) {
+        #elseif os(iOS) || os(tvOS)
+        if #available(iOS 15, tvOS 15, *) {
             /* Update the stored reference from the old iOS 14 one to the canonical iOS 15 one.
              * The iOS 14 ones are 96 bits, while the iOS 15 ones are 160 bits. We do this so
              * that we can have fast set exclusion in deleteReferences safely. */

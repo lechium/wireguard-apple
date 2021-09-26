@@ -24,16 +24,16 @@ func jsonFrom(url: URL, completionHandler: @escaping ([String: Any]?, OurError?)
 
 
 struct StorageController {
-    
+
     enum StorageError: Swift.Error {
         case fileDoesNotExist
         case otherError(error: Swift.Error)
     }
-    
+
     let destinationURL: URL
-    
+
     func store(_ url: URL, completion: (Result<URL, StorageError>) -> Void) throws {
-        
+
         guard FileManager.default.fileExists(atPath: url.path) else {
             completion(.failure(StorageError.fileDoesNotExist))
             return
@@ -43,7 +43,7 @@ struct StorageController {
             completion(.success(destinationURL))
         }
     }
-    
+
     private func perform(_ callback: () throws -> Void) rethrows {
         do {
             try callback()

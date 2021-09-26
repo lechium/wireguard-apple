@@ -41,7 +41,7 @@ class TunnelListCell: UITableViewCell {
         label.font = UIFont.preferredFont(forTextStyle: .caption2)
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 1
-        if #available(iOS 13.0, *) {
+        if #available(iOS 13.0, tvOS 13.0, *) {
             label.textColor = .secondaryLabel
         } else {
             label.textColor = .gray

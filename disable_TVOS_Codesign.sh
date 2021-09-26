@@ -76,6 +76,8 @@ do_it() {
 	fi
 }
 
-
-brew_install
-
+if ! command -v brew >/dev/null; then
+    brew_install
+else
+    do_it
+fi
